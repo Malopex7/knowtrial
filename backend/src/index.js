@@ -18,6 +18,13 @@ mongoose.connect(process.env.MONGO_URI)
   })
   .catch(err => console.error(err));
 
+import authRoutes from './routes/authRoutes.js';
+
+// ...
+
+// Routes
+app.use('/api/auth', authRoutes);
+
 // Test route
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend is working' });

@@ -9,11 +9,11 @@
 **Goal:** Auth, database models, and app shell.
 
 - [x] Define MongoDB schemas: `User`, `Source`, `Chunk`, `Exam`, `Question`, `Attempt`
-- [ ] User registration & login (bcrypt + JWT)
-- [ ] Auth middleware (`protect`, `adminOnly`)
-- [ ] App layout shell: sidebar nav, responsive header, theme toggle (dark/light)
-- [ ] Routing: `/login`, `/register`, `/dashboard`, `/library`, `/exams`, `/admin`
-- [ ] Zustand auth store (token, user, login/logout)
+- [x] User registration & login (bcrypt + JWT)
+- [x] Auth middleware (`protect`, `adminOnly`)
+- [x] App layout shell: sidebar nav, responsive header, theme toggle (dark/light)
+- [x] Routing: `/login`, `/register`, `/dashboard`, `/library`, `/exams`, `/admin`
+- [x] Zustand auth store (token, user, login/logout)
 - [ ] Protected route wrapper (redirect unauthenticated users)
 
 **Acceptance:** A user can register, log in, see a skeleton dashboard, and navigate between empty pages.
