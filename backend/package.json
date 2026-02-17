@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "lint": "eslint src/",
+    "build": "node --check src/index.js",
+    "test": "echo \"No tests configured yet\" && exit 0"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +22,8 @@
     "mongoose": "^8.16.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.0",
     "nodemon": "^3.1.10"
   }
 }
