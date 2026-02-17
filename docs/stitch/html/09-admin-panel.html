@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KnowTrial | System Admin Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1c2536",
+                        "border-dark": "#2d3a4f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3a4f;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #135bec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-border-dark bg-background-dark/80 backdrop-blur-md px-6 py-3 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-2xl">auto_stories</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-white">KnowTrial <span class="text-primary font-medium text-sm ml-1 uppercase tracking-widest">Admin</span></h1>
+</div>
+<nav class="hidden md:flex items-center gap-6 ml-4">
+<a class="text-white hover:text-primary transition-colors text-sm font-medium" href="#">Dashboard</a>
+<a class="text-primary border-b-2 border-primary pb-4 mt-4 text-sm font-medium" href="#">User Management</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-medium" href="#">System Health</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-medium" href="#">Global Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group hidden lg:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-xl">search</span>
+<input class="bg-surface-dark border-none rounded-lg pl-10 pr-4 py-2 text-sm text-white w-64 focus:ring-2 focus:ring-primary transition-all" placeholder="Search system logs..." type="text"/>
+</div>
+<button class="p-2 hover:bg-surface-dark rounded-full relative text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-background-dark"></span>
+</button>
+<div class="h-8 w-[1px] bg-border-dark mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer hover:bg-surface-dark p-1.5 rounded-lg transition-colors">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-primary text-xl">person_2</span>
+</div>
+<div class="hidden sm:block text-left">
+<p class="text-xs font-semibold text-white">Alex Rivera</p>
+<p class="text-[10px] text-slate-500 uppercase">Super Admin</p>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 border-r border-border-dark bg-background-dark p-4 hidden lg:flex flex-col gap-8">
+<div class="flex flex-col gap-2">
+<p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Main Navigation</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-dark text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20 transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">User Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-dark text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="text-sm font-medium">Question Bank</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-dark text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-sm font-medium">Analytics</span>
+</a>
+</div>
+<div class="flex flex-col gap-2">
+<p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">System Controls</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-dark text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">settings_input_component</span>
+<span class="text-sm font-medium">AI Parameters</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-dark text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">security</span>
+<span class="text-sm font-medium">API Keys &amp; Security</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-dark text-slate-400 transition-colors" href="#">
+<span class="material-symbols-outlined">dns</span>
+<span class="text-sm font-medium">Server Status</span>
+</a>
+</div>
+<div class="mt-auto p-4 bg-primary/5 rounded-xl border border-primary/10">
+<div class="flex justify-between items-center mb-2">
+<p class="text-xs text-slate-400">AI Credits Used</p>
+<p class="text-xs font-bold text-white">84%</p>
+</div>
+<div class="w-full bg-surface-dark h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[84%]"></div>
+</div>
+<p class="text-[10px] text-slate-500 mt-2">16,402 / 20,000 monthly cap</p>
+</div>
+</aside>
+<!-- Content Area -->
+<section class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-6">
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="bg-surface-dark border border-border-dark p-5 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-500/10 rounded-lg">
+<span class="material-symbols-outlined text-blue-500">person_add</span>
+</div>
+<span class="text-emerald-500 text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_up</span> +12.5%
+                        </span>
+</div>
+<p class="text-slate-400 text-sm font-medium">Total Registered Users</p>
+<h3 class="text-2xl font-bold text-white mt-1">12,840</h3>
+</div>
+<div class="bg-surface-dark border border-border-dark p-5 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">assignment</span>
+</div>
+<span class="text-emerald-500 text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_up</span> +3.1%
+                        </span>
+</div>
+<p class="text-slate-400 text-sm font-medium">Active Exams Sessions</p>
+<h3 class="text-2xl font-bold text-white mt-1">3,420</h3>
+</div>
+<div class="bg-surface-dark border border-border-dark p-5 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-purple-500/10 rounded-lg">
+<span class="material-symbols-outlined text-purple-500">token</span>
+</div>
+<span class="text-rose-500 text-xs font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">trending_down</span> -2.4%
+                        </span>
+</div>
+<p class="text-slate-400 text-sm font-medium">AI Generation Tokens</p>
+<h3 class="text-2xl font-bold text-white mt-1">850k</h3>
+</div>
+<div class="bg-surface-dark border border-border-dark p-5 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-emerald-500/10 rounded-lg">
+<span class="material-symbols-outlined text-emerald-500">dns</span>
+</div>
+<span class="text-slate-500 text-xs font-bold uppercase">Stable</span>
+</div>
+<p class="text-slate-400 text-sm font-medium">System Uptime (30d)</p>
+<h3 class="text-2xl font-bold text-white mt-1">99.98%</h3>
+</div>
+</div>
+<!-- Main Content Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<!-- User Management Table Section -->
+<div class="xl:col-span-2 space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="text-xl font-bold text-white">User Management</h2>
+<p class="text-sm text-slate-500">Review and manage platform accessibility</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-dark hover:bg-border-dark text-white text-sm font-bold px-4 py-2 rounded-lg flex items-center gap-2 border border-border-dark transition-all">
+<span class="material-symbols-outlined text-sm">filter_alt</span> Filter
+                            </button>
+<button class="bg-primary hover:bg-blue-600 text-white text-sm font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-sm">person_add</span> Add User
+                            </button>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-background-dark/50 border-b border-border-dark">
+<tr>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">User Profile</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Role</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Status</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Last Active</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark">
+<tr class="hover:bg-background-dark/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-border-dark">
+<img class="w-full h-full object-cover" data-alt="User profile avatar image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHDwHTc0oy1Sc43qgNY7yK9NuqP5RRI8hpxWuNp7HMAUVSpHhi7MJa8tTgKB2HXxNQgb9Br-RQIjJK2ggmLbFyDMTQWF-7yCK_8yuD-Rwd1z-iGdXZHCCPqwbTm20SaOoHepc3Njj4n23uj_GMKjaqpORCkSSQ3fQ6cHUbsFiMtPd0tDh3aa0NsB_enWkfFJIeswXz3xfjJyuz0iQJaaiSii5FO8Gfxv23tldDglgC8-I1Q-XNy8M-2YXuja0bohe7HiMdZ7z07G2e"/>
+</div>
+<div>
+<p class="text-sm font-semibold text-white">Jordan Smith</p>
+<p class="text-xs text-slate-500">j.smith@cloudcorp.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded border border-primary/20">Administrator</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<span class="text-sm text-white">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">2 mins ago</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-slate-700 rounded transition-colors text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-background-dark/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-border-dark">
+<img class="w-full h-full object-cover" data-alt="User profile avatar image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjQQ01P4ApvAFK_ezU6rI4NXjxiDnyHn4iIPNpPEopvNQT2ENZLbqK_vao3iukxu6qtgXgAHDD0ib8gpx4WIh3y-CJOivjAVZhRZmQugqpTgogyhvx3tGbu95iNddEsZqGUr7MXsWkjjFdwpSBJcoGFoV996gnVTRHxTIXSYQTVHNTrvxvziat0o5ZGy7mlfN021mJZJ5dSik0hM80mFG9v9J84Zx2jbQnocDCN5sDnCFmSMt5Hiu5ar85og6xuSxgdv1nhk9fweht"/>
+</div>
+<div>
+<p class="text-sm font-semibold text-white">Sarah Chen</p>
+<p class="text-xs text-slate-500">sarah.c@edu.tech</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-amber-500/10 text-amber-500 text-[10px] font-bold uppercase rounded border border-amber-500/20">Instructor</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<span class="text-sm text-white">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">14 hours ago</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-slate-700 rounded transition-colors text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-background-dark/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-border-dark">
+<img class="w-full h-full object-cover" data-alt="User profile avatar image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDN8eoBEC-qme3dmzcX5EBSOuqfKLuhaC8TuSOMSpbUhS-RhrMKGUMV8W5OZBGpyEEyKOSUnpKKRhUyPn7U7D6OMolv12ZcxDCDwWUn03y20OHyc4NpPcVCKybg4LxTOKRUpyT-vgu2g3hxz7cxFY2LBeLszaEMToQhReseIKshfqhUfmwf-FLE9UU2ijabMe-7QWs7XzgCBahPasAigXMNfgaKpZewYB_Gjsdx-IIix31SEJ3DdIdYdyn8bK9K74j7gozLeQLI-KNW"/>
+</div>
+<div>
+<p class="text-sm font-semibold text-white">Marcus Webb</p>
+<p class="text-xs text-slate-500">m.webb@gmail.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-slate-500/10 text-slate-400 text-[10px] font-bold uppercase rounded border border-slate-500/20">Student</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-rose-500"></div>
+<span class="text-sm text-white">Suspended</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">3 days ago</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-slate-700 rounded transition-colors text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-background-dark/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-border-dark">
+<img class="w-full h-full object-cover" data-alt="User profile avatar image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwauYQC_LbXFrFIkeabmU3_MSNJHayF3XNn29mkdchrSX50ooz43WCke11gcEcfmby0a2E5jEDjVaowL-zECnhC1LzEWHmMpOAoCVxqZdRUCYtHF5dcU6TlFaIxylJe7LXPHuxnQ5apk-LvSJHFHxrzBvdMQKKZxDu36ELyF3FjtHpSxW7O9jXQCAa2W483w3XBs6zAtADiAJzg2M76FT3vB6UI--7VqvpvOGpN8bTbmaxaBrbq5lmYaxLlaj_Q6SJTqURYWVEROMF"/>
+</div>
+<div>
+<p class="text-sm font-semibold text-white">Elena Rodriguez</p>
+<p class="text-xs text-slate-500">e.rodriguez@university.edu</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-slate-500/10 text-slate-400 text-[10px] font-bold uppercase rounded border border-slate-500/20">Student</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<span class="text-sm text-white">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">Just now</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1 hover:bg-slate-700 rounded transition-colors text-slate-400">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 bg-background-dark/30 border-t border-border-dark flex items-center justify-between">
+<p class="text-xs text-slate-500">Showing 4 of 12,840 users</p>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-slate-700 rounded text-slate-400 transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 hover:bg-slate-700 rounded text-slate-400 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Global Configuration & Health -->
+<div class="space-y-6">
+<div>
+<h2 class="text-xl font-bold text-white">System Settings</h2>
+<p class="text-sm text-slate-500">Global AI generation parameters</p>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl p-6 space-y-6">
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-sm font-medium text-white">LLM Model Version</label>
+<span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold rounded">PRO</span>
+</div>
+<select class="w-full bg-background-dark border-border-dark text-white rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option>GPT-4o (Production Default)</option>
+<option>Claude 3.5 Sonnet</option>
+<option>Gemini 1.5 Pro</option>
+<option>KnowTrial Llama-3-FineTuned</option>
+</select>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-sm font-medium text-white">Generation Complexity</label>
+<span class="text-xs text-primary font-bold">Level 07</span>
+</div>
+<input class="w-full h-1.5 bg-background-dark rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex justify-between text-[10px] text-slate-500 uppercase font-bold tracking-wider">
+<span>Entry Level</span>
+<span>Expert (VCP)</span>
+</div>
+</div>
+<div class="space-y-4">
+<label class="text-sm font-medium text-white">Exam Settings</label>
+<div class="flex items-center justify-between p-3 bg-background-dark/50 rounded-lg border border-border-dark">
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-white">Auto-Explanation</span>
+<span class="text-[10px] text-slate-500">Generate detailed solution rationale</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 bg-background-dark/50 rounded-lg border border-border-dark">
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-white">Enforce Strict VCP Format</span>
+<span class="text-[10px] text-slate-500">Force specific question structure</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-lg transition-all text-sm shadow-lg shadow-primary/20">
+                            Apply System Changes
+                        </button>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl p-6">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-emerald-500">bolt</span>
+<h3 class="text-sm font-bold text-white uppercase tracking-wider">Health Monitoring</h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-xs text-slate-400">API Response Time</span>
+<span class="text-xs font-bold text-emerald-500">142ms</span>
+</div>
+<div class="w-full bg-background-dark h-1 rounded-full">
+<div class="bg-emerald-500 h-full w-[15%]"></div>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs text-slate-400">Database Load</span>
+<span class="text-xs font-bold text-white">28%</span>
+</div>
+<div class="w-full bg-background-dark h-1 rounded-full">
+<div class="bg-primary h-full w-[28%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Status Bar -->
+<footer class="bg-background-dark border-t border-border-dark px-6 py-2 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Main Engine: Healthy</span>
+</div>
+<div class="w-[1px] h-3 bg-border-dark"></div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] text-slate-500 uppercase tracking-widest">Version: 2.4.1-stable</span>
+</div>
+</div>
+<div class="text-[10px] text-slate-500 font-medium">
+            © 2024 KnowTrial Enterprise. All Rights Reserved.
+        </div>
+</footer>
+</body></html>

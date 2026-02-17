@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Exam Results &amp; Review | KnowTrial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .circular-progress {
+            background: conic-gradient(#135bec 85%, #232f48 0);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#232f48] px-10 py-3 bg-white dark:bg-[#111722] sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">school</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">KnowTrial</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-semibold leading-normal" href="#">Exams</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Study Materials</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">History</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<label class="hidden lg:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full overflow-hidden">
+<div class="text-slate-400 dark:text-[#92a4c9] flex border-none bg-slate-100 dark:bg-[#232f48] items-center justify-center pl-4">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-slate-100 dark:bg-[#232f48] text-slate-900 dark:text-white focus:ring-0 placeholder:text-slate-400 dark:placeholder:text-[#92a4c9] pl-2 text-sm font-normal" placeholder="Search resources..." value=""/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-[#232f48] text-slate-600 dark:text-white hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-[#232f48] text-slate-600 dark:text-white hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20" data-alt="User profile avatar close up" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAZkGR4KSRGgOGxm7ZkXhPQ5f08EcYIdbFHc2OW-yKURGvBPdoMqySU0BlYxE7xHFkGemlE4IOkBWUBB3ZRT5V7RLC1oaVVJyfat6-9soc4elGBijriyqMLIY694vg34xiV4lHDsHYxJ2-KulPfknibZwwy8OyK_Ta_K-1GT-vTfBk-JXLAD5KbH4Id0xCb8mHJd_93eWfBh4keCRRVuO4rAUJNUNAZEN0BXcmBiINqdSSahIwhmuAvXN-Psk6PicKGeYbkUzaj4RRd");'></div>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-8 px-4 md:px-10 lg:px-40">
+<div class="max-w-[1024px] flex-1 flex flex-col gap-8">
+<!-- Hero Results Card -->
+<section class="bg-white dark:bg-[#111722] rounded-xl border border-slate-200 dark:border-[#232f48] overflow-hidden shadow-sm">
+<div class="p-8 flex flex-col md:flex-row items-center gap-10">
+<!-- Circular Score -->
+<div class="relative flex items-center justify-center">
+<div class="size-48 rounded-full circular-progress flex items-center justify-center p-4">
+<div class="size-full bg-white dark:bg-[#111722] rounded-full flex flex-col items-center justify-center shadow-inner">
+<span class="text-5xl font-black text-slate-900 dark:text-white">85%</span>
+<span class="text-xs uppercase tracking-widest text-slate-400 dark:text-[#92a4c9] font-bold">Score</span>
+</div>
+</div>
+</div>
+<!-- Performance Summary -->
+<div class="flex-1 text-center md:text-left">
+<div class="mb-4">
+<h1 class="text-3xl font-black text-slate-900 dark:text-white leading-tight">Exam Complete</h1>
+<p class="text-primary font-semibold text-lg">VCP-style Networking Fundamentals</p>
+</div>
+<div class="flex flex-wrap gap-4 justify-center md:justify-start mb-6">
+<span class="px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-lg">check_circle</span> Pass - Excellent
+                            </span>
+<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold">
+                                Threshold: 70%
+                            </span>
+</div>
+<div class="flex flex-wrap gap-3 justify-center md:justify-start">
+<button class="bg-primary hover:bg-primary/90 text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+<span class="material-symbols-outlined">refresh</span> Retry Weak Areas
+                            </button>
+<button class="bg-slate-100 dark:bg-[#232f48] hover:bg-slate-200 dark:hover:bg-[#2c3b5a] text-slate-900 dark:text-white font-bold py-2.5 px-6 rounded-lg transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span> PDF Report
+                            </button>
+</div>
+</div>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-2 lg:grid-cols-4 border-t border-slate-200 dark:border-[#232f48]">
+<div class="p-6 text-center border-r border-slate-200 dark:border-[#232f48]">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs uppercase font-bold tracking-wider mb-1">Time Taken</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">24m 12s</p>
+</div>
+<div class="p-6 text-center border-r border-slate-200 dark:border-[#232f48]">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs uppercase font-bold tracking-wider mb-1">Answered</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">50/50</p>
+</div>
+<div class="p-6 text-center border-r border-slate-200 dark:border-[#232f48]">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs uppercase font-bold tracking-wider mb-1">Accuracy</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">85.0%</p>
+</div>
+<div class="p-6 text-center">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs uppercase font-bold tracking-wider mb-1">Peer Rank</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">Top 12%</p>
+</div>
+</div>
+</section>
+<!-- Detailed Review Section -->
+<section class="flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Detailed Review</h3>
+<div class="flex bg-slate-100 dark:bg-[#232f48] p-1 rounded-lg">
+<button class="px-4 py-1.5 rounded-md text-xs font-bold bg-white dark:bg-primary text-slate-900 dark:text-white shadow-sm transition-all">All Questions</button>
+<button class="px-4 py-1.5 rounded-md text-xs font-bold text-slate-500 dark:text-[#92a4c9] hover:text-slate-900 dark:hover:text-white transition-all">Incorrect Only</button>
+</div>
+</div>
+<!-- Review List -->
+<div class="flex flex-col gap-4">
+<!-- Question 1: Correct -->
+<article class="bg-white dark:bg-[#111722] rounded-xl border border-slate-200 dark:border-[#232f48] overflow-hidden">
+<div class="p-6">
+<div class="flex items-start gap-4 mb-4">
+<div class="size-8 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">check</span>
+</div>
+<div class="flex-1">
+<span class="text-xs font-bold text-slate-400 dark:text-[#92a4c9] uppercase tracking-widest mb-1 block">Question 12</span>
+<h4 class="text-base font-semibold text-slate-900 dark:text-white leading-relaxed">
+                                        Which protocol is primarily used for assigning dynamic IP addresses in a VCP-standard virtualized network environment?
+                                    </h4>
+</div>
+</div>
+<div class="ml-12 space-y-3 mb-6">
+<div class="flex items-center gap-3 p-3 rounded-lg border border-primary bg-primary/5">
+<div class="size-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">C</div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">DHCP (Dynamic Host Configuration Protocol)</p>
+<span class="ml-auto text-[10px] font-bold text-primary uppercase tracking-tighter">Your Answer</span>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 dark:border-[#232f48] opacity-60">
+<div class="size-5 rounded-full bg-slate-200 dark:bg-[#232f48] text-slate-500 dark:text-[#92a4c9] flex items-center justify-center text-[10px] font-bold">A</div>
+<p class="text-sm font-medium text-slate-600 dark:text-slate-400">DNS (Domain Name System)</p>
+</div>
+</div>
+<!-- Explanation Box -->
+<div class="ml-12 p-5 bg-slate-50 dark:bg-[#1a2333] rounded-lg border-l-4 border-primary/50">
+<h5 class="text-xs font-bold text-primary uppercase tracking-wider mb-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">info</span> Explanation
+                                </h5>
+<p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                                    DHCP is the standard protocol for dynamic IP allocation. In a VMware environment, the NSX-T manager or traditional DHCP relays are used to ensure that virtual machines receive unique IP addresses upon power-on within their respective subnets.
+                                </p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-slate-400">link</span>
+<a class="text-xs font-bold text-primary hover:underline" href="#">Source: Chapter 4, Page 112 - IP Management &amp; Routing</a>
+</div>
+</div>
+</div>
+</article>
+<!-- Question 2: Incorrect -->
+<article class="bg-white dark:bg-[#111722] rounded-xl border border-slate-200 dark:border-[#232f48] overflow-hidden border-l-red-500 border-l-4">
+<div class="p-6">
+<div class="flex items-start gap-4 mb-4">
+<div class="size-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">close</span>
+</div>
+<div class="flex-1">
+<span class="text-xs font-bold text-slate-400 dark:text-[#92a4c9] uppercase tracking-widest mb-1 block">Question 13</span>
+<h4 class="text-base font-semibold text-slate-900 dark:text-white leading-relaxed">
+                                        What is the default MTU (Maximum Transmission Unit) size required for VXLAN encapsulation to function correctly without fragmentation?
+                                    </h4>
+</div>
+</div>
+<div class="ml-12 space-y-3 mb-6">
+<div class="flex items-center gap-3 p-3 rounded-lg border border-red-500/50 bg-red-500/5">
+<div class="size-5 rounded-full bg-red-500 text-white flex items-center justify-center text-[10px] font-bold">B</div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">1500 bytes</p>
+<span class="ml-auto text-[10px] font-bold text-red-500 uppercase tracking-tighter">Your Incorrect Choice</span>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-lg border border-green-500/50 bg-green-500/5">
+<div class="size-5 rounded-full bg-green-500 text-white flex items-center justify-center text-[10px] font-bold">D</div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">1600 bytes</p>
+<span class="ml-auto text-[10px] font-bold text-green-500 uppercase tracking-tighter">Correct Answer</span>
+</div>
+</div>
+<!-- Explanation Box -->
+<div class="ml-12 p-5 bg-slate-50 dark:bg-[#1a2333] rounded-lg border-l-4 border-red-500/50">
+<h5 class="text-xs font-bold text-red-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">auto_stories</span> Learning Rationale
+                                </h5>
+<p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                                    VXLAN adds a 50-byte header to the original Ethernet frame. To accommodate this overhead on physical network links, the MTU must be increased. While 1550 is the minimum, 1600 is the recommended standard for enterprise VCP deployments to ensure compatibility with various overlay technologies.
+                                </p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-slate-400">bookmark</span>
+<a class="text-xs font-bold text-primary hover:underline" href="#">Reference: Section 2.5 - Overlay Encapsulation Limits</a>
+</div>
+</div>
+</div>
+</article>
+<!-- Question 3: Correct with Code Snippet -->
+<article class="bg-white dark:bg-[#111722] rounded-xl border border-slate-200 dark:border-[#232f48] overflow-hidden">
+<div class="p-6">
+<div class="flex items-start gap-4 mb-4">
+<div class="size-8 rounded-lg bg-green-500/10 text-green-500 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">check</span>
+</div>
+<div class="flex-1">
+<span class="text-xs font-bold text-slate-400 dark:text-[#92a4c9] uppercase tracking-widest mb-1 block">Question 14</span>
+<h4 class="text-base font-semibold text-slate-900 dark:text-white leading-relaxed">
+                                        Which command would you use to verify the status of the virtual switch uplink in a standard CLI environment?
+                                    </h4>
+</div>
+</div>
+<div class="ml-12 p-3 bg-slate-100 dark:bg-slate-900/50 rounded-lg mb-6 border border-slate-200 dark:border-[#232f48]">
+<code class="text-sm font-mono text-slate-800 dark:text-primary">esxcli network vswitch standard list</code>
+</div>
+<!-- Explanation Box -->
+<div class="ml-12 p-5 bg-slate-50 dark:bg-[#1a2333] rounded-lg border-l-4 border-primary/50">
+<h5 class="text-xs font-bold text-primary uppercase tracking-wider mb-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">terminal</span> Tech Reference
+                                </h5>
+<p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                                    The <code class="bg-slate-200 dark:bg-slate-800 px-1 rounded">esxcli network</code> namespace provides granular control and inspection of vSphere networking. Listing the standard switch will reveal the health and linked speed of attached physical NICs (PNICs).
+                                </p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-slate-400">description</span>
+<a class="text-xs font-bold text-primary hover:underline" href="#">Exam Guide: CLI Management Tools, Part II</a>
+</div>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- Bottom Action Bar -->
+<footer class="flex items-center justify-center py-10 border-t border-slate-200 dark:border-[#232f48]">
+<div class="flex flex-col items-center gap-4">
+<p class="text-slate-500 dark:text-[#92a4c9] text-sm">Finished reviewing? You can continue to the next module.</p>
+<div class="flex gap-4">
+<button class="bg-slate-100 dark:bg-[#232f48] text-slate-900 dark:text-white font-bold py-3 px-8 rounded-lg hover:bg-slate-200 dark:hover:bg-[#2c3b5a] transition-all">
+                            Back to Study Material
+                        </button>
+<button class="bg-primary text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
+                            Start Next Practice Exam
+                        </button>
+</div>
+</div>
+</footer>
+</div>
+</main>
+<!-- Sticky Progress Bar (Optional UI Polish) -->
+<div class="fixed bottom-0 left-0 w-full h-1 bg-slate-200 dark:bg-[#232f48] z-50">
+<div class="bg-primary h-full w-[85%] transition-all duration-1000"></div>
+</div>
+</div>
+</body></html>

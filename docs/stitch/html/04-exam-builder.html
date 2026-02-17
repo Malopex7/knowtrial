@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Practice Exam Builder | KnowTrial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0f172a",
+                        "surface-dark": "#1e293b",
+                        "border-dark": "#334155"
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="border-b border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark sticky top-0 z-50">
+<div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl font-bold">clinical_notes</span>
+<h2 class="text-xl font-bold tracking-tight">KnowTrial</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-primary border-b-2 border-primary pb-5 mt-5" href="#">Exams</a>
+<a class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors" href="#">Study Materials</a>
+<a class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors" href="#">Analytics</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="bg-slate-100 dark:bg-surface-dark border-none rounded-lg pl-10 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary" placeholder="Search exams..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-surface-dark rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="Avatar of a professional male student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn9s9n3vIrw5bb3uxpouc73oiF-Y6bSeOE9EjMbzzJn1CI7etbnWYOfW-bo3kUo02PsuwlC_yZsr3rVc3S3zUC4bOYXRlCUtZTQ6eg2-2k9mBXTCQdHNN_nrHLQJLVEY4jqmoQm71X5a98S2_l10P4Xeox-x1-1KNNaZwx3nATlAWASq2Vif6Mv6ftgX9PMl3T_ZuXqUjIUF_4bE8BdFWi04wjSX23Yswvyt_X8-4T1Vfg6pgOTpAGo41UE9ZxVgiqFBdiyX3O5X9Q"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-[1440px] mx-auto w-full px-6 py-8">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
+<a class="hover:text-primary" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary" href="#">Exams</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 dark:text-white font-medium">Exam Builder</span>
+</nav>
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Left Column: Configuration -->
+<div class="flex-1 space-y-8">
+<div>
+<h1 class="text-3xl font-black tracking-tight mb-2">Practice Exam Builder</h1>
+<p class="text-slate-500 dark:text-slate-400">Configure your session for KnowTrial professional certification standards (VCP-style).</p>
+</div>
+<!-- Section 1: Content Sources -->
+<section class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">1</span>
+<h2 class="text-xl font-bold">Content Sources</h2>
+</div>
+<button class="text-primary text-sm font-semibold hover:underline">Select All</button>
+</div>
+<div class="relative mb-4">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-lg pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-primary" placeholder="Filter sources or tags..." type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+<label class="flex items-center gap-3 p-3 rounded-lg border border-primary bg-primary/5 cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-primary bg-transparent border-primary" type="checkbox"/>
+<div>
+<p class="text-sm font-bold">AWS Cloud Practitioner</p>
+<p class="text-xs text-slate-500">240 Questions available</p>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-border-dark hover:border-primary/50 transition-colors cursor-pointer">
+<input class="rounded text-primary focus:ring-primary bg-transparent border-slate-400" type="checkbox"/>
+<div>
+<p class="text-sm font-bold">Networking Basics</p>
+<p class="text-xs text-slate-500">112 Questions available</p>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-border-dark hover:border-primary/50 transition-colors cursor-pointer">
+<input class="rounded text-primary focus:ring-primary bg-transparent border-slate-400" type="checkbox"/>
+<div>
+<p class="text-sm font-bold">Kubernetes Advanced</p>
+<p class="text-xs text-slate-500">85 Questions available</p>
+</div>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-border-dark hover:border-primary/50 transition-colors cursor-pointer">
+<input class="rounded text-primary focus:ring-primary bg-transparent border-slate-400" type="checkbox"/>
+<div>
+<p class="text-sm font-bold">Uploaded PDF: Storage_V3.pdf</p>
+<p class="text-xs text-slate-500">AI Generated (45 Questions)</p>
+</div>
+</label>
+</div>
+</section>
+<!-- Section 2: Question Format -->
+<section class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+<div class="flex items-center gap-3 mb-6">
+<span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">2</span>
+<h2 class="text-xl font-bold">Question Format</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<button class="flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-primary bg-primary/5 text-center">
+<span class="material-symbols-outlined text-3xl text-primary">quiz</span>
+<span class="text-sm font-bold">Scenario MCQ</span>
+<span class="text-[10px] uppercase tracking-widest text-primary font-bold">Active</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-slate-200 dark:border-border-dark hover:border-primary/30 transition-all text-center group">
+<span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary transition-colors">checklist</span>
+<span class="text-sm font-bold">Multi-select</span>
+<span class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Available</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-slate-200 dark:border-border-dark hover:border-primary/30 transition-all text-center group">
+<span class="material-symbols-outlined text-3xl text-slate-400 group-hover:text-primary transition-colors">edit_note</span>
+<span class="text-sm font-bold">Short Answer</span>
+<span class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Available</span>
+</button>
+</div>
+</section>
+<!-- Section 3: Session Rules -->
+<section class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+<div class="flex items-center gap-3 mb-6">
+<span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">3</span>
+<h2 class="text-xl font-bold">Session Rules</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-4">
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="text-sm font-bold">Number of Questions</label>
+<span class="text-xs font-bold bg-slate-100 dark:bg-background-dark px-2 py-1 rounded">50</span>
+</div>
+<input class="w-full h-2 bg-slate-200 dark:bg-background-dark rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="10" type="range" value="50"/>
+<div class="flex justify-between mt-1">
+<span class="text-[10px] text-slate-400">10</span>
+<span class="text-[10px] text-slate-400">100</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-background-dark border border-slate-100 dark:border-border-dark">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">timer</span>
+<div>
+<p class="text-sm font-bold">Time Limit</p>
+<p class="text-[10px] text-slate-500">Auto-submit when expired</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<input class="w-12 h-8 text-center text-sm font-bold bg-white dark:bg-surface-dark border border-slate-300 dark:border-border-dark rounded focus:ring-primary" type="text" value="90"/>
+<span class="text-xs font-medium text-slate-400">min</span>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-background-dark border border-slate-100 dark:border-border-dark">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-orange-500">bolt</span>
+<div>
+<p class="text-sm font-bold">Hard Mode</p>
+<p class="text-[10px] text-slate-500">No hints or explanations</p>
+</div>
+</div>
+<button class="w-10 h-5 bg-primary rounded-full relative flex items-center px-1 transition-colors">
+<div class="w-3.5 h-3.5 bg-white rounded-full absolute right-1"></div>
+</button>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-background-dark border border-slate-100 dark:border-border-dark">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-green-500">visibility</span>
+<div>
+<p class="text-sm font-bold">Instant Feedback</p>
+<p class="text-[10px] text-slate-500">See results after each question</p>
+</div>
+</div>
+<button class="w-10 h-5 bg-slate-300 dark:bg-slate-700 rounded-full relative flex items-center px-1 transition-colors">
+<div class="w-3.5 h-3.5 bg-white rounded-full"></div>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Live Meter & Summary -->
+<aside class="w-full lg:w-80 space-y-6">
+<div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm sticky top-24">
+<h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Live Configuration</h3>
+<!-- Difficulty Meter -->
+<div class="relative flex flex-col items-center mb-8">
+<div class="relative size-40">
+<svg class="size-full -rotate-90" viewbox="0 0 36 36">
+<path class="text-slate-200 dark:text-background-dark stroke-[3]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor"></path>
+<path class="text-primary stroke-[3]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="75, 100" stroke-linecap="round"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-black text-primary">7.5</span>
+<span class="text-[10px] uppercase font-bold text-slate-400">Score</span>
+</div>
+</div>
+<div class="mt-4 text-center">
+<p class="text-lg font-bold">Moderate-Hard</p>
+<p class="text-xs text-slate-500">Based on your selections</p>
+</div>
+</div>
+<div class="space-y-4 pt-6 border-t border-slate-100 dark:border-border-dark">
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500">Selected Topics</span>
+<span class="font-bold">1/4</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500">Total Questions</span>
+<span class="font-bold">50</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500">Est. Duration</span>
+<span class="font-bold text-primary">90 mins</span>
+</div>
+</div>
+<div class="mt-8 space-y-3">
+<button class="w-full py-4 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined">rocket_launch</span>
+                            Generate Exam
+                        </button>
+<button class="w-full py-3 bg-slate-100 dark:bg-background-dark hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg font-semibold text-sm transition-all border border-slate-200 dark:border-border-dark">
+                            Save Template
+                        </button>
+</div>
+<div class="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/10">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-xl">info</span>
+<p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+                                Your exam will be generated using AI models calibrated for VCP and AWS certification patterns.
+                            </p>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<footer class="mt-auto border-t border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark py-8 px-6">
+<div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-xl">clinical_notes</span>
+<span class="text-sm font-bold tracking-tight">KnowTrial Platform © 2024</span>
+</div>
+<div class="flex items-center gap-8 text-xs font-medium text-slate-400">
+<a class="hover:text-primary" href="#">System Status</a>
+<a class="hover:text-primary" href="#">API Documentation</a>
+<a class="hover:text-primary" href="#">Support Center</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>

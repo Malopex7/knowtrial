@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Study Source Viewer - KnowTrial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1a2231",
+                        "border-dark": "#2d3a54",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2d3a54;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #135bec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-border-dark bg-background-dark/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white">auto_stories</span>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight">KnowTrial</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-400 hover:text-white text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-white text-sm font-medium transition-colors border-b-2 border-primary pb-1" href="#">My Materials</a>
+<a class="text-slate-400 hover:text-white text-sm font-medium transition-colors" href="#">Practice Exams</a>
+<a class="text-slate-400 hover:text-white text-sm font-medium transition-colors" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-surface-dark border-none rounded-lg pl-10 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary text-white" placeholder="Search materials..." type="text"/>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">play_circle</span>
+                Start Exam
+            </button>
+<div class="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="User profile avatar illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwy0tFFdiPgVa8t8MOMSl3YdsSlT3GS-g2b3hYf6j11kLAwwpWIuUOp6vpYUlPJQFJGaVRrpTU-eHVhHmczxO1-FdA61eG-0Vor_FHt9PgyN6GzoocQBCknPrTptagqiAosGdgxaYf0bvoUG64DTsqHP32kzvjaSOL4AIikDp9GJaluF9ICWRBKa_qiOhvD8lYvDnIKIuuxgoDKzYCAHgcR_Ee8sGUMhaDPwtsusGp2OAfx1g8SA1SnT1oUQqjJ7I0cZXfIIHFhYf7"/>
+</div>
+</div>
+</header>
+<!-- Sub-Header / Breadcrumbs & Controls -->
+<div class="px-6 py-4 border-b border-border-dark flex flex-col md:flex-row md:items-center justify-between gap-4 bg-background-dark">
+<div>
+<nav class="flex items-center gap-2 text-xs text-slate-500 mb-1">
+<a class="hover:text-primary transition-colors" href="#">My Materials</a>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-slate-300">AWS Cloud Practitioner CLF-C02</span>
+</nav>
+<h1 class="text-2xl font-black text-white tracking-tight">Study Source Viewer</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-surface-dark p-1 rounded-xl flex gap-1">
+<button class="px-4 py-1.5 rounded-lg text-xs font-bold bg-primary text-white shadow-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">view_column</span> Parallel
+                </button>
+<button class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">dock_to_left</span> Focused
+                </button>
+</div>
+<div class="h-8 w-px bg-border-dark mx-1"></div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-dark border border-border-dark text-slate-300 text-xs font-bold hover:bg-slate-800 transition-all">
+<span class="material-symbols-outlined text-sm">sync</span> Sync Scroll
+            </button>
+<button class="flex items-center justify-center w-10 h-10 rounded-lg bg-surface-dark border border-border-dark text-slate-300 hover:text-white transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Main Content Area: Split Pane -->
+<main class="flex-1 flex overflow-hidden">
+<!-- Left Pane: Source Panel -->
+<section class="flex-1 border-r border-border-dark flex flex-col bg-background-dark/50">
+<div class="px-6 py-3 border-b border-border-dark bg-background-dark flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">description</span>
+<span class="text-xs font-bold uppercase tracking-widest text-slate-400">Source Text (Raw)</span>
+</div>
+<span class="text-[10px] font-mono text-slate-500">2,482 words extracted</span>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 font-display">
+<div class="max-w-3xl mx-auto space-y-6 text-slate-400 leading-relaxed text-base">
+<p class="bg-primary/5 border-l-2 border-primary/40 pl-4 py-2 text-slate-200">
+<span class="inline-block w-8 -ml-12 text-[10px] text-slate-600 font-mono">001</span>
+                        Amazon Web Services (AWS) is a comprehensive, evolving cloud computing platform provided by Amazon. It provides a mix of infrastructure as a service (IaaS), platform as a service (PaaS) and packaged software as a service (SaaS) offerings.
+                    </p>
+<p>
+<span class="inline-block w-8 -ml-12 text-[10px] text-slate-600 font-mono">006</span>
+                        AWS services can offer an organization tools such as compute power, database storage and content delivery services. AWS launched in 2006 from the internal infrastructure that Amazon.com built to handle its online retail operations.
+                    </p>
+<p class="hover:bg-primary/5 transition-colors cursor-default rounded pr-2">
+<span class="inline-block w-8 -ml-12 text-[10px] text-slate-600 font-mono">012</span>
+                        One of the first AWS services were Simple Storage Service (S3) and Elastic Compute Cloud (EC2). These services are the building blocks of the cloud. S3 provides object storage through a web service interface, while EC2 allows users to rent virtual computers on which to run their own computer applications.
+                    </p>
+<p>
+<span class="inline-block w-8 -ml-12 text-[10px] text-slate-600 font-mono">018</span>
+                        Security in the cloud is a shared responsibility between AWS and the customer. AWS is responsible for security "of" the cloud, while the customer is responsible for security "in" the cloud. This includes patching guest OS, configuring firewalls, and managing identity access.
+                    </p>
+<p>
+<span class="inline-block w-8 -ml-12 text-[10px] text-slate-600 font-mono">025</span>
+                        Global Infrastructure is organized into Regions and Availability Zones (AZs). A Region is a physical location in the world where we have multiple Availability Zones. AZs consist of one or more discrete data centers, each with redundant power, networking, and connectivity, housed in separate facilities.
+                    </p>
+<p>
+<span class="inline-block w-8 -ml-12 text-[10px] text-slate-600 font-mono">032</span>
+                        Amazon Aurora is a MySQL and PostgreSQL-compatible relational database built for the cloud, that combines the performance and availability of traditional enterprise databases with the simplicity and cost-effectiveness of open-source databases.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Right Pane: Chunk Panel -->
+<section class="w-[450px] lg:w-[550px] flex flex-col bg-surface-dark/30">
+<div class="px-6 py-3 border-b border-border-dark bg-background-dark flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">account_tree</span>
+<span class="text-xs font-bold uppercase tracking-widest text-slate-400">Knowledge Chunks</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-emerald-500 px-2 py-0.5 bg-emerald-500/10 rounded">12 Modules Generated</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
+<!-- Chunk Card 1 -->
+<div class="bg-surface-dark border border-primary/40 rounded-xl p-5 shadow-xl relative group ring-1 ring-primary/20">
+<div class="flex items-start justify-between mb-3">
+<span class="text-[10px] font-bold text-primary uppercase tracking-tighter bg-primary/10 px-2 py-1 rounded">Module 01: Core Services</span>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-slate-500 hover:text-white"><span class="material-symbols-outlined text-sm">edit</span></button>
+<button class="text-slate-500 hover:text-white"><span class="material-symbols-outlined text-sm">flag</span></button>
+</div>
+</div>
+<h3 class="text-white font-bold text-lg mb-2">Introduction to AWS Infrastructure</h3>
+<p class="text-slate-400 text-sm mb-4">Focuses on the IaaS, PaaS, and SaaS definitions and the initial launch timeline of the platform.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-3 text-xs text-slate-300 bg-background-dark/50 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-sm">verified</span>
+<span>Service Types: IaaS, PaaS, SaaS</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-slate-300 bg-background-dark/50 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-sm">calendar_today</span>
+<span>Launch Year: 2006 (from Amazon.com internal)</span>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-dark flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-sm">quiz</span> 4 Questions
+                            </div>
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span> Easy
+                            </div>
+</div>
+<span class="flex items-center gap-1 text-[10px] font-bold text-emerald-500">
+<span class="material-symbols-outlined text-xs">check_circle</span> Ready
+                        </span>
+</div>
+</div>
+<!-- Chunk Card 2 (Active/Hover State) -->
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 hover:border-primary/50 transition-all cursor-pointer group">
+<div class="flex items-start justify-between mb-3">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter bg-slate-800 px-2 py-1 rounded">Module 02: Storage &amp; Compute</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-2">S3 and EC2 Fundamentals</h3>
+<p class="text-slate-400 text-sm mb-4">Building blocks of AWS cloud; distinguishing between object storage and virtualized computing.</p>
+<div class="space-y-2">
+<div class="flex items-center gap-3 text-xs text-slate-300 bg-background-dark/50 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-sm">storage</span>
+<span>S3: Object-based storage web service</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-slate-300 bg-background-dark/50 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-sm">memory</span>
+<span>EC2: Rentable virtual servers (Instances)</span>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-border-dark flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-sm">quiz</span> 8 Questions
+                            </div>
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span> Medium
+                            </div>
+</div>
+<span class="flex items-center gap-1 text-[10px] font-bold text-emerald-500">
+<span class="material-symbols-outlined text-xs">check_circle</span> Ready
+                        </span>
+</div>
+</div>
+<!-- Chunk Card 3 -->
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 hover:border-primary/50 transition-all cursor-pointer group opacity-80">
+<div class="flex items-start justify-between mb-3">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter bg-slate-800 px-2 py-1 rounded">Module 03: Security</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-2">Shared Responsibility Model</h3>
+<p class="text-slate-400 text-sm mb-4">Critical exam topic regarding the demarcation of security duties between AWS and clients.</p>
+<div class="mt-4 pt-4 border-t border-border-dark flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-sm">quiz</span> 6 Questions
+                            </div>
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span> Hard
+                            </div>
+</div>
+<span class="flex items-center gap-1 text-[10px] font-bold text-amber-500">
+<span class="material-symbols-outlined text-xs">pending</span> Reviewing
+                        </span>
+</div>
+</div>
+<!-- Chunk Card 4 -->
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 hover:border-primary/50 transition-all cursor-pointer group opacity-80">
+<div class="flex items-start justify-between mb-3">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter bg-slate-800 px-2 py-1 rounded">Module 04: Global Infra</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-2">Regions &amp; Availability Zones</h3>
+<p class="text-slate-400 text-sm mb-4">The physical structure of the AWS cloud and high-availability concepts.</p>
+<div class="mt-4 pt-4 border-t border-border-dark flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-sm">quiz</span> 5 Questions
+                            </div>
+<div class="flex items-center gap-1 text-[10px] text-slate-500">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span> Medium
+                            </div>
+</div>
+<span class="flex items-center gap-1 text-[10px] font-bold text-emerald-500">
+<span class="material-symbols-outlined text-xs">check_circle</span> Ready
+                        </span>
+</div>
+</div>
+</div>
+<!-- Bottom Action Area for Chunk Panel -->
+<div class="p-4 border-t border-border-dark bg-background-dark/80">
+<button class="w-full bg-primary/10 hover:bg-primary/20 text-primary py-3 rounded-lg text-sm font-bold border border-primary/30 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Manual Knowledge Chunk
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer Stats / Status Bar -->
+<footer class="h-10 border-t border-border-dark bg-background-dark px-6 flex items-center justify-between text-[10px] text-slate-500 font-medium">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                AI Parsing Service Online
+            </div>
+<div>Sync: <span class="text-slate-300">Enabled</span></div>
+<div>Confidence Score: <span class="text-slate-300">98.4%</span></div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+                Live Preview
+            </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">shortcut</span>
+                CMD + S to Save
+            </div>
+</div>
+</footer>
+</body></html>
