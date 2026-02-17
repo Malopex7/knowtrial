@@ -8,7 +8,7 @@
 
 **Goal:** Auth, database models, and app shell.
 
-- [ ] Define MongoDB schemas: `User`, `Source`, `Chunk`, `Exam`, `Question`, `Attempt`
+- [x] Define MongoDB schemas: `User`, `Source`, `Chunk`, `Exam`, `Question`, `Attempt`
 - [ ] User registration & login (bcrypt + JWT)
 - [ ] Auth middleware (`protect`, `adminOnly`)
 - [ ] App layout shell: sidebar nav, responsive header, theme toggle (dark/light)
