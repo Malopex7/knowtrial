@@ -13,11 +13,14 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error(err));
 
 import authRoutes from './routes/authRoutes.js';
+
 import sourceRoutes from './routes/sourceRoutes.js';
+import examRoutes from './routes/examRoutes.js';
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/sources', sourceRoutes);
+app.use('/api/exams', examRoutes);
 
 // Test route
 app.get('/api/test', (req, res) => {

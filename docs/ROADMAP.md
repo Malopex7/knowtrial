@@ -35,7 +35,7 @@
   - [x] Add Source modal: tabs for URL / File Upload / Paste Text
   - [x] Tag management (create, assign, filter)
   - [x] Source Viewer page: read extracted text & browse chunks
-- [ ] **Error handling:** clear messages when URL/file parsing fails, suggest fallback (paste text)
+- [x] **Error handling:** clear messages when URL/file parsing fails, suggest fallback (paste text)
 
 **Acceptance:** I can add material (URL/upload/text), it processes into chunks, and I can browse it.
 
@@ -46,7 +46,7 @@
 **Goal:** AI-powered exam creation grounded in stored material.
 
 - [ ] **Backend — Question generation**
-  - [ ] `POST /api/exams/generate` — accept scope (all/tag/sources), type, count, difficulty, options
+  - [x] `POST /api/exams/generate` — accept scope (all/tag/sources), type, count, difficulty, options
   - [ ] Retrieve relevant chunks based on scope & tags
   - [ ] Generate questions via LLM (OpenAI/Gemini) with strict prompt:
     - No copyrighted questions — original only
