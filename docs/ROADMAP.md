@@ -47,8 +47,8 @@
 
 - [ ] **Backend — Question generation**
   - [x] `POST /api/exams/generate` — accept scope (all/tag/sources), type, count, difficulty, options
-  - [ ] Retrieve relevant chunks based on scope & tags
-  - [ ] Generate questions via LLM (OpenAI/Gemini) with strict prompt:
+  - [x] Retrieve relevant chunks based on scope & tags
+  - [ ] Generate questions via LLM (Gemini) with strict prompt:
     - No copyrighted questions — original only
     - Each question grounded in chunk content with citations
     - Output must conform to Question JSON schema

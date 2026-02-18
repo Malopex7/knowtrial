@@ -3,6 +3,7 @@ import Question from '../models/Question.js';
 import Chunk from '../models/Chunk.js';
 import Source from '../models/Source.js';
 import mongoose from 'mongoose';
+import { generateQuestions } from '../lib/llm.js';
 
 /**
  * Generate a new exam based on criteria
@@ -57,12 +58,6 @@ export const generateExam = async (req, res) => {
             if (!scopeIds || scopeIds.length === 0) {
                 return res.status(400).json({ message: 'scopeIds (tags) required for "tags" scope' });
             }
-            // Chunks match if they have the tag OR their parent source has the tag
-            // Optimization: Filter allowedSourceIds to only those with the tags, 
-            // OR checks chunks directly. 
-            // Simpler approach: find chunks with tags IN scopeIds
-            // BUT strict tag scoping might mean "chunks FROM sources with these tags" OR "chunks WITH these tags"
-            // Let's assume: Chunks having the tag, OR chunks belonging to a source with the tag.
 
             // Find sources that match the tags (from the already filtered owned sources)
             const sourceIdsWithTags = allowedSources
@@ -71,7 +66,7 @@ export const generateExam = async (req, res) => {
 
             chunkQuery = {
                 $and: [
-                    { sourceId: { $in: allowedSourceIds } }, // Ownership check (redundant but safe)
+                    { sourceId: { $in: allowedSourceIds } },
                     {
                         $or: [
                             { tags: { $in: scopeIds } }, // Chunk has tag
@@ -111,30 +106,37 @@ export const generateExam = async (req, res) => {
 
         await newExam.save();
 
-        // 6. Generate Questions (Stub)
-        const questions = selectedChunks.map((chunk, index) => {
-            return {
-                examId: newExam._id,
-                type: type === 'mixed' ? 'mcq' : type,
-                difficulty,
-                prompt: `STUB: Question generated from chunk ${chunk._id.toString().substring(0, 8)}...`,
-                options: [
-                    { key: 'A', text: 'Option A (Correct)' },
-                    { key: 'B', text: 'Option B' },
-                    { key: 'C', text: 'Option C' },
-                    { key: 'D', text: 'Option D' }
-                ],
-                correctAnswer: 'A',
-                explanation: `Explanation derived from text: "${chunk.text ? chunk.text.substring(0, 50) : '...'}..."`,
-                citations: [{
-                    sourceId: chunk.sourceId,
-                    chunkId: chunk._id
-                }],
-                topicTags: chunk.tags
-            };
+        // 6. Generate Questions via LLM
+        // We pass the selected chunks to the LLM service
+        console.log(`[Controller] Selected ${selectedChunks.length} chunks for generation.`);
+
+        const llmQuestions = await generateQuestions(selectedChunks, {
+            type: type === 'mixed' ? 'mcq' : type, // Fallback mixed to mcq for now, or randomize per question
+            difficulty
         });
 
-        const createdQuestions = await Question.insertMany(questions);
+        // Map LLM output to Schema format if needed (though llm.js should return matching schema)
+        // Add examId to each question
+        const questionDocs = llmQuestions.map(q => ({
+            ...q,
+            examId: newExam._id,
+            citations: [{
+                sourceId: q.sourceId,
+                chunkId: q.chunkId
+            }]
+        }));
+
+        if (questionDocs.length === 0) {
+            // Rollback exam creation if generation completely failed
+            await Exam.findByIdAndDelete(newExam._id);
+            return res.status(500).json({ message: 'Failed to generate any valid questions from the selected content.' });
+        }
+
+        const createdQuestions = await Question.insertMany(questionDocs);
+
+        // Update exam question count to match actual generated count
+        newExam.questionCount = createdQuestions.length;
+        await newExam.save();
 
         res.status(201).json({
             message: 'Exam generated successfully',
