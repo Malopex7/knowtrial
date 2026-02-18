@@ -248,3 +248,28 @@ export const deleteSource = async (req, res) => {
         res.status(500).json({ success: false, error: 'Server Error' });
     }
 };
+
+// @desc    Get chunks for a specific source
+// @route   GET /api/sources/:id/chunks
+// @access  Private
+export const getSourceChunks = async (req, res) => {
+    try {
+        const source = await Source.findOne({
+            _id: req.params.id,
+            userId: req.user._id,
+        });
+
+        if (!source) {
+            return res.status(404).json({ success: false, error: 'Source not found' });
+        }
+
+        const chunks = await Chunk.find({ sourceId: source._id })
+            .sort({ index: 1 })
+            .lean();
+
+        res.json({ success: true, count: chunks.length, data: chunks });
+    } catch (error) {
+        console.error('getSourceChunks error:', error);
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+};

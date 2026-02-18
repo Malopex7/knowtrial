@@ -7,6 +7,7 @@ import {
     getSource,
     deleteSource,
     updateSource,
+    getSourceChunks,
 } from '../controllers/sourceController.js';
 
 
@@ -20,5 +21,8 @@ router.route('/:id')
     .get(protect, getSource)
     .delete(protect, deleteSource)
     .patch(protect, updateSource);
+
+router.route('/:id/chunks')
+    .get(protect, getSourceChunks);
 
 export default router;

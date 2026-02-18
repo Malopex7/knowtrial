@@ -1,5 +1,3 @@
-"use client";
-
 import { SourceList } from "@/components/library/SourceList";
 import { AddSourceModal } from "@/components/library/AddSourceModal";
 

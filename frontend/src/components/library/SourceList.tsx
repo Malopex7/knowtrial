@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { FileText, Globe, MoreVertical, Trash2, ExternalLink, Edit, Filter } from "lucide-react";
@@ -175,11 +176,15 @@ export function SourceList() {
                                     </TableCell>
                                     <TableCell className="font-medium">
                                         <div className="flex flex-col gap-1">
-                                            <div className="flex items-center gap-1">
-                                                <a href={source.url || "#"} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <Link href={`/library/${source._id}`} className="font-medium hover:underline flex items-center gap-1">
                                                     {source.title}
-                                                    {source.url && <ExternalLink className="h-3 w-3 text-muted-foreground" />}
-                                                </a>
+                                                </Link>
+                                                {source.url && (
+                                                    <a href={source.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground" title="Open original URL">
+                                                        <ExternalLink className="h-3 w-3" />
+                                                    </a>
+                                                )}
                                             </div>
                                             {/* Tags */}
                                             {source.tags && source.tags.length > 0 && (

@@ -34,7 +34,7 @@
   - [x] Study Library page: list sources with title, type icon, tags, date, status badge
   - [x] Add Source modal: tabs for URL / File Upload / Paste Text
   - [x] Tag management (create, assign, filter)
-  - [ ] Source Viewer page: read extracted text & browse chunks
+  - [x] Source Viewer page: read extracted text & browse chunks
 - [ ] **Error handling:** clear messages when URL/file parsing fails, suggest fallback (paste text)
 
 **Acceptance:** I can add material (URL/upload/text), it processes into chunks, and I can browse it.
