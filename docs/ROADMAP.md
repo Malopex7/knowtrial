@@ -14,7 +14,7 @@
 - [x] App layout shell: sidebar nav, responsive header, theme toggle (dark/light)
 - [x] Routing: `/login`, `/register`, `/dashboard`, `/library`, `/exams`, `/admin`
 - [x] Zustand auth store (token, user, login/logout)
-- [ ] Protected route wrapper (redirect unauthenticated users)
+- [x] Protected route wrapper (redirect unauthenticated users)
 
 **Acceptance:** A user can register, log in, see a skeleton dashboard, and navigate between empty pages.
 
@@ -25,10 +25,11 @@
 **Goal:** Study Material Library — ingest, chunk, and browse source material.
 
 - [ ] **Backend — Source ingestion**
-  - [ ] `POST /api/sources` — accept URL, file upload (PDF/DOCX/TXT via GridFS), or raw text
-  - [ ] Text extraction: URL scraping, PDF parsing (`pdf-parse`), DOCX parsing (`mammoth`)
-  - [ ] Chunking engine: split extracted text into segments with metadata (`chunk_id`, `source_id`, heading, text, token count, tags)
-  - [ ] Store chunks in MongoDB; update source status (`Pending → Processed | Failed`)
+  - [x] `POST /api/sources` — accept URL, file upload (PDF/DOCX/TXT via GridFS), or raw text
+  - [x] Text extraction: URL scraping, PDF parsing (`pdf-parse`), DOCX parsing (`mammoth`)
+  - [x] Text extraction: URL scraping, PDF parsing (`pdf-parse`), DOCX parsing (`mammoth`)
+  - [x] Chunking engine: split extracted text into segments with metadata (`chunk_id`, `source_id`, heading, text, token count, tags)
+  - [x] Store chunks in MongoDB; update source status (`Pending → Processed | Failed`)
 - [ ] **Frontend — Library UI**
   - [ ] Study Library page: list sources with title, type icon, tags, date, status badge
   - [ ] Add Source modal: tabs for URL / File Upload / Paste Text
