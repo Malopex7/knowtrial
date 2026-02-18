@@ -140,18 +140,53 @@ export const createSource = async (req, res) => {
     }
 };
 
-// @desc    Get all sources for the authenticated user
-// @route   GET /api/sources
+// @desc    Get all sources for the authenticated user (optional tag filter)
+// @route   GET /api/sources?tag=...
 // @access  Private
 export const getSources = async (req, res) => {
     try {
-        const sources = await Source.find({ userId: req.user._id })
+        const query = { userId: req.user._id };
+
+        if (req.query.tag) {
+            query.tags = req.query.tag;
+        }
+
+        const sources = await Source.find(query)
             .sort({ createdAt: -1 })
             .lean();
 
         res.json({ success: true, count: sources.length, data: sources });
     } catch (error) {
         console.error('getSources error:', error);
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+};
+
+// @desc    Update source (title, tags)
+// @route   PATCH /api/sources/:id
+// @access  Private
+export const updateSource = async (req, res) => {
+    try {
+        const { title, tags } = req.body;
+        const source = await Source.findOne({
+            _id: req.params.id,
+            userId: req.user._id,
+        });
+
+        if (!source) {
+            return res.status(404).json({ success: false, error: 'Source not found' });
+        }
+
+        if (title !== undefined) source.title = title;
+        if (tags !== undefined) {
+            source.tags = Array.isArray(tags) ? tags : [tags];
+        }
+
+        await source.save();
+
+        res.json({ success: true, data: source });
+    } catch (error) {
+        console.error('updateSource error:', error);
         res.status(500).json({ success: false, error: 'Server Error' });
     }
 };

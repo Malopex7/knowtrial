@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
-import { FileText, Globe, MoreVertical, Trash2, ExternalLink } from "lucide-react";
+import { FileText, Globe, MoreVertical, Trash2, ExternalLink, Edit, Filter } from "lucide-react";
 import { useAuthStore } from "@/store";
 import { StatusBadge } from "./StatusBadge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,24 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { EditSourceDialog } from "./EditSourceDialog";
+import { Badge } from "@/components/ui/badge";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
 
 interface Source {
     _id: string;
@@ -30,29 +48,36 @@ export function SourceList() {
     const [loading, setLoading] = useState(true);
     const { token } = useAuthStore();
 
-    useEffect(() => {
-        const fetchSources = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sources`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = await res.json();
-                if (data.success) {
-                    setSources(data.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch sources:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Edit Dialog State
+    const [editingSource, setEditingSource] = useState<Source | null>(null);
+    const [editOpen, setEditOpen] = useState(false);
 
+    // Filter State
+    const [selectedTag, setSelectedTag] = useState<string>("all");
+
+    const fetchSources = useCallback(async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sources`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await res.json();
+            if (data.success) {
+                setSources(data.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch sources:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [token]);
+
+    useEffect(() => {
         if (token) {
             fetchSources();
         }
-    }, [token]);
+    }, [token, fetchSources]);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this source?")) return;
@@ -72,6 +97,19 @@ export function SourceList() {
         }
     };
 
+    const handleEdit = (source: Source) => {
+        setEditingSource(source);
+        setEditOpen(true);
+    };
+
+    // Get unique tags from all sources for filter
+    const allTags = Array.from(new Set(sources.flatMap(s => s.tags || []))).sort();
+
+    // Filtered sources
+    const filteredSources = selectedTag === "all"
+        ? sources
+        : sources.filter(s => s.tags?.includes(selectedTag));
+
     if (loading) {
         return <div className="p-8 text-center text-muted-foreground">Loading library...</div>;
     }
@@ -89,78 +127,110 @@ export function SourceList() {
     }
 
     return (
-        <div className="rounded-md border bg-card">
-            <div className="relative w-full overflow-auto">
-                <table className="w-full caption-bottom text-sm text-left">
-                    <thead className="[&_tr]:border-b">
-                        <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <th className="h-12 px-4 align-middle font-medium text-muted-foreground w-[50px]">Type</th>
-                            <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Title</th>
-                            <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Status</th>
-                            <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Chunks</th>
-                            <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Date</th>
-                            <th className="h-12 px-4 align-middle font-medium text-muted-foreground text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="[&_tr:last-child]:border-0">
-                        {sources.map((source) => (
-                            <tr key={source._id} className="border-b transition-colors hover:bg-muted/50">
-                                <td className="p-4 align-middle">
-                                    {source.type === "url" ? (
-                                        <Globe className="w-5 h-5 text-blue-500" />
-                                    ) : (
-                                        <FileText className="w-5 h-5 text-orange-500" />
-                                    )}
-                                </td>
-                                <td className="p-4 align-middle font-medium">
-                                    <div className="flex flex-col">
-                                        <span>{source.title}</span>
-                                        {source.url && (
-                                            <a href={source.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:underline flex items-center gap-1">
-                                                {source.url} <ExternalLink className="w-3 h-3" />
-                                            </a>
-                                        )}
-                                        {source.tags?.length > 0 && (
-                                            <div className="flex gap-1 mt-1">
-                                                {source.tags.map(tag => (
-                                                    <span key={tag} className="px-1.5 py-0.5 rounded-sm bg-secondary text-secondary-foreground text-[10px]">
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </td>
-                                <td className="p-4 align-middle">
-                                    <StatusBadge status={source.status} />
-                                </td>
-                                <td className="p-4 align-middle text-muted-foreground">
-                                    {source.chunkCount || 0}
-                                </td>
-                                <td className="p-4 align-middle text-muted-foreground">
-                                    {format(new Date(source.createdAt), "MMM d, yyyy")}
-                                </td>
-                                <td className="p-4 align-middle text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                                <span className="sr-only">Open menu</span>
-                                                <MoreVertical className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDelete(source._id)}>
-                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                Delete
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </td>
-                            </tr>
+        <div className="space-y-4">
+            {/* Filter Bar */}
+            <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <Select value={selectedTag} onValueChange={setSelectedTag}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Filter by Tag" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Tags</SelectItem>
+                        {allTags.map(tag => (
+                            <SelectItem key={tag} value={tag}>{tag}</SelectItem>
                         ))}
-                    </tbody>
-                </table>
+                    </SelectContent>
+                </Select>
             </div>
+
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[50px]"></TableHead>
+                            <TableHead>Title</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Chunks</TableHead>
+                            <TableHead>Date Added</TableHead>
+                            <TableHead className="w-[50px]"></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {filteredSources.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="h-24 text-center">
+                                    No sources found.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            filteredSources.map((source) => (
+                                <TableRow key={source._id}>
+                                    <TableCell>
+                                        {source.type === "url" ? (
+                                            <Globe className="h-4 w-4 text-blue-500" />
+                                        ) : (
+                                            <FileText className="h-4 w-4 text-orange-500" />
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="font-medium">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-1">
+                                                <a href={source.url || "#"} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+                                                    {source.title}
+                                                    {source.url && <ExternalLink className="h-3 w-3 text-muted-foreground" />}
+                                                </a>
+                                            </div>
+                                            {/* Tags */}
+                                            {source.tags && source.tags.length > 0 && (
+                                                <div className="flex flex-wrap gap-1">
+                                                    {source.tags.map(tag => (
+                                                        <Badge key={tag} variant="outline" className="text-[10px] px-1 py-0 h-5">
+                                                            {tag}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <StatusBadge status={source.status} />
+                                    </TableCell>
+                                    <TableCell>{source.chunkCount}</TableCell>
+                                    <TableCell>{format(new Date(source.createdAt), "MMM d, yyyy")}</TableCell>
+                                    <TableCell>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                    <span className="sr-only">Open menu</span>
+                                                    <MoreVertical className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem onClick={() => handleEdit(source)}>
+                                                    <Edit className="mr-2 h-4 w-4" /> Edit
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleDelete(source._id)} className="text-red-600 focus:text-red-600">
+                                                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+
+            <EditSourceDialog
+                source={editingSource}
+                open={editOpen}
+                onOpenChange={setEditOpen}
+                onSourceUpdated={() => {
+                    fetchSources();
+                }}
+            />
         </div>
     );
 }

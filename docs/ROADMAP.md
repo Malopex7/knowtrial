@@ -33,7 +33,7 @@
 - [x] **Frontend — Library UI**
   - [x] Study Library page: list sources with title, type icon, tags, date, status badge
   - [x] Add Source modal: tabs for URL / File Upload / Paste Text
-  - [ ] Tag management (create, assign, filter)
+  - [x] Tag management (create, assign, filter)
   - [ ] Source Viewer page: read extracted text & browse chunks
 - [ ] **Error handling:** clear messages when URL/file parsing fails, suggest fallback (paste text)
 

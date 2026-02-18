@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { TagInput } from "@/components/ui/tag-input";
 import { useAuthStore } from "@/store";
 
 // Allowed file types
@@ -47,12 +48,14 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
 
     const [textTitle, setTextTitle] = useState("");
     const [rawText, setRawText] = useState("");
+    const [tags, setTags] = useState<string[]>([]);
 
     const resetForm = () => {
         setUrl("");
         setFile(null);
         setTextTitle("");
         setRawText("");
+        setTags([]);
         setError(null);
     };
 
@@ -99,18 +102,19 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
 
             if (type === "url") {
                 if (!url) throw new Error("Please enter a URL");
-                body = JSON.stringify({ type: "url", url });
+                body = JSON.stringify({ type: "url", url, tags });
                 (headers as Record<string, string>)["Content-Type"] = "application/json";
             } else if (type === "file") {
                 if (!file) throw new Error("Please select a file");
                 const formData = new FormData();
                 formData.append("file", file);
+                tags.forEach(tag => formData.append("tags", tag));
                 body = formData;
                 // Content-Type is set automatically for FormData
             } else if (type === "text") {
                 if (!textTitle) throw new Error("Please enter a title");
                 if (!rawText) throw new Error("Please enter text content");
-                body = JSON.stringify({ type: "text", title: textTitle, text: rawText });
+                body = JSON.stringify({ type: "text", title: textTitle, text: rawText, tags });
                 (headers as Record<string, string>)["Content-Type"] = "application/json";
             }
 
@@ -175,6 +179,14 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                                 onChange={(e) => setUrl(e.target.value)}
                             />
                         </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="tags-url">Tags</Label>
+                            <TagInput
+                                tags={tags}
+                                setTags={setTags}
+                                placeholder="Enter tags (press Enter)..."
+                            />
+                        </div>
                         {error && <p className="text-sm text-red-500">{error}</p>}
                         <Button onClick={() => handleSubmit('url')} disabled={loading} className="w-full">
                             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -219,6 +231,14 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                                 </div>
                             )}
                         </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="tags-file">Tags</Label>
+                            <TagInput
+                                tags={tags}
+                                setTags={setTags}
+                                placeholder="Enter tags..."
+                            />
+                        </div>
                         {error && <p className="text-sm text-red-500">{error}</p>}
                         <Button onClick={() => handleSubmit('file')} disabled={loading || !file} className="w-full">
                             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -245,6 +265,14 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                                 className="min-h-[150px]"
                                 value={rawText}
                                 onChange={(e) => setRawText(e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="tags-text">Tags</Label>
+                            <TagInput
+                                tags={tags}
+                                setTags={setTags}
+                                placeholder="Enter tags..."
                             />
                         </div>
                         {error && <p className="text-sm text-red-500">{error}</p>}
