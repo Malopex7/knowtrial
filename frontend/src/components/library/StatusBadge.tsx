@@ -1,6 +1,6 @@
 import { ActionTooltip } from "@/components/ui/action-tooltip";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle, AlertCircle, Loader2, LucideIcon, Info } from "lucide-react";
+import { CheckCircle2, Circle, AlertCircle, Loader2, LucideIcon } from "lucide-react";
 
 interface StatusBadgeProps {
     status: string;
