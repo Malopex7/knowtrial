@@ -30,8 +30,8 @@
   - [x] Text extraction: URL scraping, PDF parsing (`pdf-parse`), DOCX parsing (`mammoth`)
   - [x] Chunking engine: split extracted text into segments with metadata (`chunk_id`, `source_id`, heading, text, token count, tags)
   - [x] Store chunks in MongoDB; update source status (`Pending → Processed | Failed`)
-- [ ] **Frontend — Library UI**
-  - [ ] Study Library page: list sources with title, type icon, tags, date, status badge
+- [x] **Frontend — Library UI**
+  - [x] Study Library page: list sources with title, type icon, tags, date, status badge
   - [ ] Add Source modal: tabs for URL / File Upload / Paste Text
   - [ ] Tag management (create, assign, filter)
   - [ ] Source Viewer page: read extracted text & browse chunks

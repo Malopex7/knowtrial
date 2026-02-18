@@ -43,9 +43,16 @@ const mainNavItems = [
         icon: LayoutDashboard,
     },
     {
-        title: "Study Library",
-        url: "/library",
+        title: "Knowledge Base",
+        url: "/dashboard/library",
         icon: BookOpen,
+        isActive: true,
+        items: [
+            {
+                title: "Study Library",
+                url: "/dashboard/library",
+            },
+        ],
     },
     {
         title: "Practice Exams",
