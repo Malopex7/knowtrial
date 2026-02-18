@@ -42,6 +42,7 @@ interface Source {
     status: string;
     chunkCount: number;
     createdAt: string;
+    errorMessage?: string;
 }
 
 export function SourceList() {
@@ -199,7 +200,7 @@ export function SourceList() {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <StatusBadge status={source.status} />
+                                        <StatusBadge status={source.status} errorMessage={source.errorMessage} />
                                     </TableCell>
                                     <TableCell>{source.chunkCount}</TableCell>
                                     <TableCell>{format(new Date(source.createdAt), "MMM d, yyyy")}</TableCell>

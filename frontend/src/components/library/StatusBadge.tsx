@@ -1,9 +1,11 @@
+import { ActionTooltip } from "@/components/ui/action-tooltip";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle, AlertCircle, Loader2, LucideIcon } from "lucide-react";
+import { CheckCircle2, Circle, AlertCircle, Loader2, LucideIcon, Info } from "lucide-react";
 
 interface StatusBadgeProps {
     status: string;
     className?: string;
+    errorMessage?: string;
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: LucideIcon }> = {
@@ -29,7 +31,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: LucideI
     },
 };
 
-export function StatusBadge({ status, className }: StatusBadgeProps) {
+export function StatusBadge({ status, className, errorMessage }: StatusBadgeProps) {
     const config = statusConfig[status.toLowerCase()] || {
         label: status,
         color: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400",
@@ -38,10 +40,10 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 
     const Icon = config.icon;
 
-    return (
+    const Badge = (
         <span
             className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium",
+                "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium cursor-default",
                 config.color,
                 className
             )}
@@ -50,4 +52,14 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
             {config.label}
         </span>
     );
+
+    if (errorMessage && status.toLowerCase() === 'failed') {
+        return (
+            <ActionTooltip label={errorMessage} side="top">
+                {Badge}
+            </ActionTooltip>
+        );
+    }
+
+    return Badge;
 }

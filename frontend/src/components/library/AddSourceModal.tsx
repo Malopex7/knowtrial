@@ -50,6 +50,8 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
     const [rawText, setRawText] = useState("");
     const [tags, setTags] = useState<string[]>([]);
 
+    const [activeTab, setActiveTab] = useState("url");
+
     const resetForm = () => {
         setUrl("");
         setFile(null);
@@ -57,6 +59,7 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
         setRawText("");
         setTags([]);
         setError(null);
+        setActiveTab("url");
     };
 
     const handleDrag = (e: React.DragEvent) => {
@@ -147,7 +150,10 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(val) => {
+            setOpen(val);
+            if (!val) resetForm();
+        }}>
             <DialogTrigger asChild>
                 <Button>
                     <Plus className="mr-2 h-4 w-4" /> Add Source
@@ -161,7 +167,7 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                     </DialogDescription>
                 </DialogHeader>
 
-                <Tabs defaultValue="url" className="w-full">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                     <TabsList className="grid w-full grid-cols-3">
                         <TabsTrigger value="url"><Globe className="w-4 h-4 mr-2" /> URL</TabsTrigger>
                         <TabsTrigger value="file"><Upload className="w-4 h-4 mr-2" /> File</TabsTrigger>
@@ -187,7 +193,18 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                                 placeholder="Enter tags (press Enter)..."
                             />
                         </div>
-                        {error && <p className="text-sm text-red-500">{error}</p>}
+                        {error && (
+                            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                                <p>{error}</p>
+                                <Button
+                                    variant="link"
+                                    className="h-auto p-0 text-destructive underline"
+                                    onClick={() => setActiveTab("text")}
+                                >
+                                    Try pasting text instead &rarr;
+                                </Button>
+                            </div>
+                        )}
                         <Button onClick={() => handleSubmit('url')} disabled={loading} className="w-full">
                             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Import URL
@@ -239,7 +256,18 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                                 placeholder="Enter tags..."
                             />
                         </div>
-                        {error && <p className="text-sm text-red-500">{error}</p>}
+                        {error && (
+                            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                                <p>{error}</p>
+                                <Button
+                                    variant="link"
+                                    className="h-auto p-0 text-destructive underline"
+                                    onClick={() => setActiveTab("text")}
+                                >
+                                    Try pasting text instead &rarr;
+                                </Button>
+                            </div>
+                        )}
                         <Button onClick={() => handleSubmit('file')} disabled={loading || !file} className="w-full">
                             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Upload File
