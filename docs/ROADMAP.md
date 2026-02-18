@@ -32,7 +32,7 @@
   - [x] Store chunks in MongoDB; update source status (`Pending → Processed | Failed`)
 - [x] **Frontend — Library UI**
   - [x] Study Library page: list sources with title, type icon, tags, date, status badge
-  - [ ] Add Source modal: tabs for URL / File Upload / Paste Text
+  - [x] Add Source modal: tabs for URL / File Upload / Paste Text
   - [ ] Tag management (create, assign, filter)
   - [ ] Source Viewer page: read extracted text & browse chunks
 - [ ] **Error handling:** clear messages when URL/file parsing fails, suggest fallback (paste text)

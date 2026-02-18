@@ -1,0 +1,19 @@
+
+> frontend@0.1.0 lint
+> next lint
+
+
+./src/app/dashboard/library/page.tsx
+3:10  Error: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+4:10  Error: 'Plus' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/library/AddSourceModal.tsx
+13:5  Error: 'DialogFooter' is defined but never used.  @typescript-eslint/no-unused-vars
+96:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+97:17  Error: 'headers' is never reassigned. Use 'const' instead.  prefer-const
+135:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/ui/textarea.tsx
+5:18  Error: An interface declaring no members is equivalent to its supertype.  @typescript-eslint/no-empty-object-type
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

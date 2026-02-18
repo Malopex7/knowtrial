@@ -1,6 +1,5 @@
 import { SourceList } from "@/components/library/SourceList";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { AddSourceModal } from "@/components/library/AddSourceModal";
 
 export default function LibraryPage() {
     return (
@@ -13,10 +12,7 @@ export default function LibraryPage() {
                     </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                    {/* Placeholder for Add Source Modal */}
-                    <Button disabled>
-                        <Plus className="mr-2 h-4 w-4" /> Add Source (Coming Soon)
-                    </Button>
+                    <AddSourceModal onSourceAdded={() => window.location.reload()} />
                 </div>
             </div>
 
