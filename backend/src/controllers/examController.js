@@ -25,42 +25,78 @@ export const generateExam = async (req, res) => {
             return res.status(400).json({ message: 'Missing required fields: scope, type, difficulty' });
         }
 
-        // userId should come from auth middleware (req.user)
-        // For now, we'll assume a dummy user or extract if auth is implemented
-        // FIXME: Replace with actual user ID from auth middleware
-        const userId = req.user?._id || new mongoose.Types.ObjectId('000000000000000000000000');
+        const userId = req.user._id;
 
-        // 2. Fetch Candidate Chunks based on Scope
-        let chunkQuery = {};
+        // 2. Fetch User's Sources to enforce ownership
+        let userSourceQuery = { userId: userId };
+
+        // If specific sources are requested, validate they belong to the user
+        if (scope === 'sources') {
+            if (!scopeIds || scopeIds.length === 0) {
+                return res.status(400).json({ message: 'scopeIds (sourceIds) required for "sources" scope' });
+            }
+            // Filter user sources by the requested IDs
+            userSourceQuery._id = { $in: scopeIds };
+        }
+
+        // Get allowed source IDs
+        // We only need the IDs for the chunk query
+        const allowedSources = await Source.find(userSourceQuery).select('_id tags');
+        const allowedSourceIds = allowedSources.map(s => s._id);
+
+        if (allowedSourceIds.length === 0) {
+            return res.status(404).json({ message: 'No accessible sources found matching the criteria.' });
+        }
+
+        // 3. Build Chunk Query
+        let chunkQuery = {
+            sourceId: { $in: allowedSourceIds } // BASE FILTER: MUST be in allowed sources
+        };
 
         if (scope === 'tags') {
             if (!scopeIds || scopeIds.length === 0) {
                 return res.status(400).json({ message: 'scopeIds (tags) required for "tags" scope' });
             }
-            chunkQuery.tags = { $in: scopeIds };
-        } else if (scope === 'sources') {
-            if (!scopeIds || scopeIds.length === 0) {
-                return res.status(400).json({ message: 'scopeIds (sourceIds) required for "sources" scope' });
-            }
-            chunkQuery.sourceId = { $in: scopeIds };
+            // Chunks match if they have the tag OR their parent source has the tag
+            // Optimization: Filter allowedSourceIds to only those with the tags, 
+            // OR checks chunks directly. 
+            // Simpler approach: find chunks with tags IN scopeIds
+            // BUT strict tag scoping might mean "chunks FROM sources with these tags" OR "chunks WITH these tags"
+            // Let's assume: Chunks having the tag, OR chunks belonging to a source with the tag.
+
+            // Find sources that match the tags (from the already filtered owned sources)
+            const sourceIdsWithTags = allowedSources
+                .filter(s => s.tags && s.tags.some(t => scopeIds.includes(t)))
+                .map(s => s._id);
+
+            chunkQuery = {
+                $and: [
+                    { sourceId: { $in: allowedSourceIds } }, // Ownership check (redundant but safe)
+                    {
+                        $or: [
+                            { tags: { $in: scopeIds } }, // Chunk has tag
+                            { sourceId: { $in: sourceIdsWithTags } } // Source has tag
+                        ]
+                    }
+                ]
+            };
         }
-        // scope === 'all' implies no filter on chunks (except maybe ownership if we add that layer)
 
         // Count available chunks to ensure we have enough
         const totalDocs = await Chunk.countDocuments(chunkQuery);
 
         if (totalDocs === 0) {
-            return res.status(404).json({ message: 'No content found matching the criteria.' });
+            return res.status(404).json({ message: 'No content available for exam generation.' });
         }
 
-        // 3. Select Random Chunks
-        // Using $sample aggregation for random selection is efficient
+        // 4. Select Random Chunks
+        // Using $sample aggregation
         const selectedChunks = await Chunk.aggregate([
             { $match: chunkQuery },
             { $sample: { size: Number(count) } }
         ]);
 
-        // 4. Create Exam Record
+        // 5. Create Exam Record
         const newExam = new Exam({
             userId,
             title: title || `Exam - ${new Date().toLocaleDateString()}`,
@@ -68,20 +104,18 @@ export const generateExam = async (req, res) => {
             scopeIds,
             examType: type,
             difficulty,
-            questionCount: selectedChunks.length, // May be less than requested if not enough content
+            questionCount: selectedChunks.length,
             timeLimitMinutes: options.timeLimitMinutes,
             randomized: options.randomized || false
         });
 
         await newExam.save();
 
-        // 5. Generate Questions (Stub for AI Generation)
-        // We will create one question per selected chunk for now
+        // 6. Generate Questions (Stub)
         const questions = selectedChunks.map((chunk, index) => {
-            // Stub logic: Create a dummy question based on the chunk
             return {
                 examId: newExam._id,
-                type: type === 'mixed' ? 'mcq' : type, // Fallback for mixed
+                type: type === 'mixed' ? 'mcq' : type,
                 difficulty,
                 prompt: `STUB: Question generated from chunk ${chunk._id.toString().substring(0, 8)}...`,
                 options: [
@@ -90,8 +124,8 @@ export const generateExam = async (req, res) => {
                     { key: 'C', text: 'Option C' },
                     { key: 'D', text: 'Option D' }
                 ],
-                correctAnswer: 'A', // Simple default
-                explanation: `Explanation derived from text: "${chunk.text.substring(0, 50)}..."`,
+                correctAnswer: 'A',
+                explanation: `Explanation derived from text: "${chunk.text ? chunk.text.substring(0, 50) : '...'}..."`,
                 citations: [{
                     sourceId: chunk.sourceId,
                     chunkId: chunk._id
