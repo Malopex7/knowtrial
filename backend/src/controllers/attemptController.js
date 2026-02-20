@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import Exam from '../models/Exam.js';
 import Attempt from '../models/Attempt.js';
 

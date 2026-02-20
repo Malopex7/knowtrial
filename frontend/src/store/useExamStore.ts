@@ -11,7 +11,7 @@ export interface Question {
 interface ExamState {
     examId: string | null;
     questions: Question[];
-    answers: Record<string, any>;
+    answers: Record<string, string | string[]>;
     flagged: Set<string>;
     timeRemaining: number | null; // in seconds
     currentIndex: number;
@@ -19,7 +19,7 @@ interface ExamState {
 
     // Actions
     initExam: (examId: string, questions: Question[], timeLimitMinutes?: number) => void;
-    setAnswer: (questionId: string, answer: any) => void;
+    setAnswer: (questionId: string, answer: string | string[]) => void;
     toggleFlag: (questionId: string) => void;
     tickTimer: () => void;
     jumpTo: (index: number) => void;
@@ -31,7 +31,7 @@ interface ExamState {
 
 export const useExamStore = create<ExamState>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             examId: null,
             questions: [],
             answers: {},
@@ -121,7 +121,7 @@ export const useExamStore = create<ExamState>()(
                 setItem: (name, value) => {
                     const toStore = { ...value };
                     if (toStore.state && toStore.state.flagged) {
-                        toStore.state.flagged = Array.from(toStore.state.flagged) as any;
+                        toStore.state.flagged = Array.from(toStore.state.flagged) as unknown as string[];
                     }
                     localStorage.setItem(name, JSON.stringify(toStore));
                 },
