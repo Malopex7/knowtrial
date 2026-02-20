@@ -119,9 +119,9 @@ export const useExamStore = create<ExamState>()(
                     }
                 },
                 setItem: (name, value) => {
-                    const toStore = { ...value };
+                    const toStore: any = { ...value };
                     if (toStore.state && toStore.state.flagged) {
-                        toStore.state.flagged = Array.from(toStore.state.flagged) as unknown as string[];
+                        toStore.state.flagged = Array.from(toStore.state.flagged);
                     }
                     localStorage.setItem(name, JSON.stringify(toStore));
                 },
