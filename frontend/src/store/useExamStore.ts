@@ -119,6 +119,7 @@ export const useExamStore = create<ExamState>()(
                     }
                 },
                 setItem: (name, value) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const toStore: any = { ...value };
                     if (toStore.state && toStore.state.flagged) {
                         toStore.state.flagged = Array.from(toStore.state.flagged);
