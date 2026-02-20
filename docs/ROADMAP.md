@@ -48,17 +48,17 @@
 - [ ] **Backend — Question generation**
   - [x] `POST /api/exams/generate` — accept scope (all/tag/sources), type, count, difficulty, options
   - [x] Retrieve relevant chunks based on scope & tags
-  - [ ] Generate questions via LLM (Gemini) with strict prompt:
+  - [x] Generate questions via LLM (Gemini) with strict prompt:
     - No copyrighted questions — original only
     - Each question grounded in chunk content with citations
     - Output must conform to Question JSON schema
-  - [ ] Schema validation on every generated question
-  - [ ] Store exam + questions in DB
-- [ ] **Frontend — Exam Builder UI**
-  - [ ] Source scope selector (all, by tag, by source)
-  - [ ] Exam config: type (MCQ/multi/scenario/short), count, difficulty, time limit, randomize
-  - [ ] Generate button with loading state
-  - [ ] Preview generated exam before starting
+  - [x] Schema validation on every generated question
+  - [x] Store exam + questions in DB
+- [x] **Frontend — Exam Builder UI**
+  - [x] Source scope selector (all, by tag, by source)
+  - [x] Exam config: type (MCQ/multi/scenario/short), count, difficulty, time limit, randomize
+  - [x] Generate button with loading state
+  - [x] Preview generated exam before starting
 
 **Question JSON Schema:**
 ```json

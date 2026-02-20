@@ -3,8 +3,7 @@ import { Lexend } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/layout/app-sidebar";
+import { ClientLayout } from "@/components/layout/client-layout";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -33,13 +32,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <SidebarProvider>
-              <AppSidebar />
-              <main className="w-full">
-                <SidebarTrigger />
-                {children}
-              </main>
-            </SidebarProvider>
+            <ClientLayout>
+              {children}
+            </ClientLayout>
           </AuthProvider>
         </ThemeProvider>
       </body>

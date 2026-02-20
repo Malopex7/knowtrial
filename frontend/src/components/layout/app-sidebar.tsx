@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/store"
 import {
     BookOpen,
     LayoutDashboard,
@@ -75,11 +77,19 @@ const settingsItems = [
 ]
 
 export function AppSidebar() {
-    // Mock user data for now
-    const user = {
-        name: "John Doe",
-        email: "john@example.com",
-        avatar: "/avatars/shadcn.jpg",
+    const router = useRouter()
+    const { user: authUser, logout } = useAuthStore()
+
+    const handleSignOut = () => {
+        logout()
+        router.push("/login")
+    }
+
+    // Fallback if not loaded yet
+    const displayUser = {
+        name: authUser?.name || "User",
+        email: authUser?.email || "",
+        avatar: "", // Will use fallback initials
     }
 
     return (
@@ -148,12 +158,12 @@ export function AppSidebar() {
                                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                                 >
                                     <Avatar className="h-8 w-8 rounded-lg">
-                                        <AvatarImage src={user.avatar} alt={user.name} />
-                                        <AvatarFallback className="rounded-lg">JD</AvatarFallback>
+                                        <AvatarImage src={displayUser.avatar} alt={displayUser.name} />
+                                        <AvatarFallback className="rounded-lg">{displayUser.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                                     </Avatar>
                                     <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold">{user.name}</span>
-                                        <span className="truncate text-xs">{user.email}</span>
+                                        <span className="truncate font-semibold">{displayUser.name}</span>
+                                        <span className="truncate text-xs">{displayUser.email}</span>
                                     </div>
                                     <ChevronUp className="ml-auto size-4" />
                                 </SidebarMenuButton>
@@ -170,7 +180,7 @@ export function AppSidebar() {
                                     <Settings className="mr-2 size-4" />
                                     <span>Settings</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive">
                                     <LogOut className="mr-2 size-4" />
                                     <span>Sign out</span>
                                 </DropdownMenuItem>

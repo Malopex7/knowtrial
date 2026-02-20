@@ -2,8 +2,8 @@ import Exam from '../models/Exam.js';
 import Question from '../models/Question.js';
 import Chunk from '../models/Chunk.js';
 import Source from '../models/Source.js';
-import mongoose from 'mongoose';
 import { generateQuestions } from '../lib/llm.js';
+import { validateQuestionBatch } from '../lib/questionValidator.js';
 
 /**
  * Generate a new exam based on criteria
@@ -29,19 +29,15 @@ export const generateExam = async (req, res) => {
         const userId = req.user._id;
 
         // 2. Fetch User's Sources to enforce ownership
-        let userSourceQuery = { userId: userId };
+        const userSourceQuery = { userId };
 
-        // If specific sources are requested, validate they belong to the user
         if (scope === 'sources') {
             if (!scopeIds || scopeIds.length === 0) {
                 return res.status(400).json({ message: 'scopeIds (sourceIds) required for "sources" scope' });
             }
-            // Filter user sources by the requested IDs
             userSourceQuery._id = { $in: scopeIds };
         }
 
-        // Get allowed source IDs
-        // We only need the IDs for the chunk query
         const allowedSources = await Source.find(userSourceQuery).select('_id tags');
         const allowedSourceIds = allowedSources.map(s => s._id);
 
@@ -51,7 +47,7 @@ export const generateExam = async (req, res) => {
 
         // 3. Build Chunk Query
         let chunkQuery = {
-            sourceId: { $in: allowedSourceIds } // BASE FILTER: MUST be in allowed sources
+            sourceId: { $in: allowedSourceIds }
         };
 
         if (scope === 'tags') {
@@ -59,7 +55,6 @@ export const generateExam = async (req, res) => {
                 return res.status(400).json({ message: 'scopeIds (tags) required for "tags" scope' });
             }
 
-            // Find sources that match the tags (from the already filtered owned sources)
             const sourceIdsWithTags = allowedSources
                 .filter(s => s.tags && s.tags.some(t => scopeIds.includes(t)))
                 .map(s => s._id);
@@ -69,15 +64,14 @@ export const generateExam = async (req, res) => {
                     { sourceId: { $in: allowedSourceIds } },
                     {
                         $or: [
-                            { tags: { $in: scopeIds } }, // Chunk has tag
-                            { sourceId: { $in: sourceIdsWithTags } } // Source has tag
+                            { tags: { $in: scopeIds } },
+                            { sourceId: { $in: sourceIdsWithTags } }
                         ]
                     }
                 ]
             };
         }
 
-        // Count available chunks to ensure we have enough
         const totalDocs = await Chunk.countDocuments(chunkQuery);
 
         if (totalDocs === 0) {
@@ -85,7 +79,6 @@ export const generateExam = async (req, res) => {
         }
 
         // 4. Select Random Chunks
-        // Using $sample aggregation
         const selectedChunks = await Chunk.aggregate([
             { $match: chunkQuery },
             { $sample: { size: Number(count) } }
@@ -107,17 +100,30 @@ export const generateExam = async (req, res) => {
         await newExam.save();
 
         // 6. Generate Questions via LLM
-        // We pass the selected chunks to the LLM service
         console.log(`[Controller] Selected ${selectedChunks.length} chunks for generation.`);
 
         const llmQuestions = await generateQuestions(selectedChunks, {
-            type: type === 'mixed' ? 'mcq' : type, // Fallback mixed to mcq for now, or randomize per question
+            type, // Pass through directly — llm.js handles 'mixed' internally
             difficulty
         });
 
-        // Map LLM output to Schema format if needed (though llm.js should return matching schema)
-        // Add examId to each question
-        const questionDocs = llmQuestions.map(q => ({
+        // 7. Validate & sanitize LLM output
+        const { valid: validQuestions, rejected } = validateQuestionBatch(llmQuestions, {
+            type: type === 'mixed' ? undefined : type,
+            difficulty
+        });
+
+        if (rejected.length > 0) {
+            console.warn(`[Controller] ${rejected.length} question(s) failed validation:`);
+            for (const r of rejected) {
+                console.warn(`  - Errors: ${r.errors.join(', ')}`);
+            }
+        }
+
+        console.log(`[Controller] ${validQuestions.length}/${llmQuestions.length} questions passed validation.`);
+
+        // 8. Build question documents for DB
+        const questionDocs = validQuestions.map(q => ({
             ...q,
             examId: newExam._id,
             citations: [{
@@ -127,14 +133,16 @@ export const generateExam = async (req, res) => {
         }));
 
         if (questionDocs.length === 0) {
-            // Rollback exam creation if generation completely failed
             await Exam.findByIdAndDelete(newExam._id);
-            return res.status(500).json({ message: 'Failed to generate any valid questions from the selected content.' });
+            return res.status(500).json({
+                message: 'Failed to generate any valid questions from the selected content.',
+                details: `${llmQuestions.length} raw question(s) were generated but none passed validation.`
+            });
         }
 
         const createdQuestions = await Question.insertMany(questionDocs);
 
-        // Update exam question count to match actual generated count
+        // Update exam with actual count
         newExam.questionCount = createdQuestions.length;
         await newExam.save();
 
@@ -148,5 +156,51 @@ export const generateExam = async (req, res) => {
     } catch (error) {
         console.error('Error generating exam:', error);
         res.status(500).json({ message: 'Failed to generate exam', error: error.message });
+    }
+};
+
+// @desc    Get a single exam
+// @route   GET /api/exams/:id
+// @access  Private
+export const getExam = async (req, res) => {
+    try {
+        const exam = await Exam.findOne({
+            _id: req.params.id,
+            userId: req.user._id
+        });
+
+        if (!exam) {
+            return res.status(404).json({ message: 'Exam not found' });
+        }
+
+        res.json(exam);
+    } catch (error) {
+        console.error('getExam error:', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+// @desc    Get questions for an exam
+// @route   GET /api/exams/:id/questions
+// @access  Private
+export const getExamQuestions = async (req, res) => {
+    try {
+        // First verify exam belongs to user
+        const exam = await Exam.findOne({
+            _id: req.params.id,
+            userId: req.user._id
+        });
+
+        if (!exam) {
+            return res.status(404).json({ message: 'Exam not found' });
+        }
+
+        const questions = await Question.find({ examId: exam._id })
+            .select('-citations'); // Hide citations from the test taker
+
+        res.json(questions);
+    } catch (error) {
+        console.error('getExamQuestions error:', error);
+        res.status(500).json({ message: 'Server Error' });
     }
 };

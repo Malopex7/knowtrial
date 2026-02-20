@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +23,7 @@ interface ExamResponse {
 
 export function ExamBuilder() {
     const { token } = useAuthStore();
+    const router = useRouter();
 
     // State
     const [title, setTitle] = useState("");
@@ -116,7 +118,12 @@ export function ExamBuilder() {
                 </CardContent>
                 <CardFooter>
                     <Button onClick={() => setSuccess(null)} variant="outline">Create Another</Button>
-                    <Button className="ml-2">Start Exam (Coming Soon)</Button>
+                    <Button
+                        className="ml-2"
+                        onClick={() => router.push(`/exams/${success.exam._id}/take`)}
+                    >
+                        Start Exam Now
+                    </Button>
                 </CardFooter>
             </Card>
         );
