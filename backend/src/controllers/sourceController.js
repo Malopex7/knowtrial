@@ -1,5 +1,6 @@
 import { Readable } from 'stream';
 import path from 'path';
+import crypto from 'crypto';
 import Source from '../models/Source.js';
 import Chunk from '../models/Chunk.js';
 import { getBucket } from '../lib/gridfs.js';
@@ -72,6 +73,7 @@ export const createSource = async (req, res) => {
             sourceData.type = 'url';
             sourceData.url = url;
             sourceData.title = title || url;
+            sourceData.fileHash = crypto.createHash('sha256').update(url).digest('hex');
         } else if (file) {
             // ── File upload mode ─────────────────
             const ext = path.extname(file.originalname).toLowerCase();
@@ -90,6 +92,7 @@ export const createSource = async (req, res) => {
             sourceData.originalFilename = file.originalname;
             sourceData.gridfsFileId = gridfsFileId;
             sourceData.title = title || file.originalname;
+            sourceData.fileHash = crypto.createHash('sha256').update(file.buffer).digest('hex');
         } else {
             // ── Raw text mode ────────────────────
             if (!title) {
@@ -105,6 +108,7 @@ export const createSource = async (req, res) => {
             // it right here as a single chunk so the text isn't lost.
             // Let's store it as a placeholder chunk immediately:
             sourceData._rawText = rawText; // transient, not saved on Source
+            sourceData.fileHash = crypto.createHash('sha256').update(rawText).digest('hex');
         }
 
         const source = await Source.create(sourceData);

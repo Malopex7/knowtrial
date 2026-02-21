@@ -38,6 +38,11 @@ const sourceSchema = new mongoose.Schema(
             default: [],
             index: true,
         },
+        fileHash: {
+            type: String,
+            index: true,
+            default: null,
+        },
         status: {
             type: String,
             enum: ['pending', 'processing', 'processed', 'failed'],

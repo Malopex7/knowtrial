@@ -20,7 +20,41 @@ export async function processSource(sourceId) {
         source.errorMessage = null;
         await source.save();
 
-        // 2. Extract Text
+        // 2. Cache Check: Bypass PDF-parse entirely if another user uploaded the same document
+        if (source.fileHash) {
+            console.log(`[Processor] Checking cache for hash: ${source.fileHash}`);
+            const cachedSource = await Source.findOne({
+                fileHash: source.fileHash,
+                status: 'processed',
+                _id: { $ne: source._id }
+            });
+
+            if (cachedSource) {
+                console.log(`[Processor] Cache HIT! Found duplicate source ${cachedSource._id}. Reusing chunks...`);
+                await Chunk.deleteMany({ sourceId: source._id });
+
+                const cachedChunks = await Chunk.find({ sourceId: cachedSource._id }).lean();
+                if (cachedChunks.length > 0) {
+                    const newChunks = cachedChunks.map(c => {
+                        const { _id, createdAt, updatedAt, ...rest } = c;
+                        return {
+                            ...rest,
+                            sourceId: source._id,
+                            tags: source.tags || []
+                        };
+                    });
+                    await Chunk.insertMany(newChunks);
+                }
+
+                source.status = 'processed';
+                source.chunkCount = cachedChunks.length;
+                await source.save();
+                console.log(`[Processor] Source ${source._id} processed instantly via CACHE.`);
+                return; // Early return to avoid expensive LlamaParse re-chunking
+            }
+        }
+
+        // 3. Extract Text
         console.log(`[Processor] Extracting text...`);
         const text = await extractText(source);
 
@@ -32,12 +66,12 @@ export async function processSource(sourceId) {
             console.log(`[Processor] Extracted ${text.length} chars.`);
         }
 
-        // 3. Chunk
+        // 4. Chunk
         console.log(`[Processor] Chunking...`);
         const chunksData = chunkText(text || '', { maxTokens: 1000 });
         console.log(`[Processor] Created ${chunksData.length} chunks.`);
 
-        // 4. Store Chunks
+        // 5. Store Chunks
         // Clear existing chunks first (idempotency)
         await Chunk.deleteMany({ sourceId: source._id });
 
@@ -54,7 +88,7 @@ export async function processSource(sourceId) {
             await Chunk.insertMany(chunkDocs);
         }
 
-        // 5. Update Source Completion
+        // 6. Update Source Completion
         source.status = 'processed';
         source.chunkCount = chunksData.length;
         await source.save();

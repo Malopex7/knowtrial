@@ -143,8 +143,8 @@
   - [x] View all sources across users
   - [ ] Retry failed source processing
   - [x] Manage global tags/topics
-- [ ] **Performance**
-  - [ ] Cache processed materials (avoid re-chunking)
+- [x] **Performance**
+  - [x] Cache processed materials (avoid re-chunking)
   - [ ] Reuse chunk index for exam generation
 - [ ] **UI polish**
   - [ ] Responsive design audit (mobile + desktop)
