@@ -18,6 +18,7 @@ export const generateExam = async (req, res) => {
             type, // 'mcq', 'multi', 'scenario', 'short', 'mixed'
             difficulty, // 'easy', 'medium', 'hard'
             count = 10,
+            llmProvider = 'auto', // 'gemini' | 'github' | 'auto'
             options = {} // { timeLimitMinutes, randomized }
         } = req.body;
 
@@ -103,8 +104,9 @@ export const generateExam = async (req, res) => {
         console.log(`[Controller] Selected ${selectedChunks.length} chunks for generation.`);
 
         const llmQuestions = await generateQuestions(selectedChunks, {
-            type, // Pass through directly — llm.js handles 'mixed' internally
-            difficulty
+            type,
+            difficulty,
+            provider: llmProvider,
         });
 
         // 7. Validate & sanitize LLM output

@@ -273,3 +273,33 @@ export const getSourceChunks = async (req, res) => {
         res.status(500).json({ success: false, error: 'Server Error' });
     }
 };
+
+// @desc    Get a single chunk by ID (for citation modal)
+// @route   GET /api/sources/:id/chunks/:chunkId
+// @access  Private
+export const getChunk = async (req, res) => {
+    try {
+        const source = await Source.findOne({
+            _id: req.params.id,
+            userId: req.user._id,
+        });
+
+        if (!source) {
+            return res.status(404).json({ success: false, error: 'Source not found' });
+        }
+
+        const chunk = await Chunk.findOne({
+            _id: req.params.chunkId,
+            sourceId: source._id,
+        }).lean();
+
+        if (!chunk) {
+            return res.status(404).json({ success: false, error: 'Chunk not found' });
+        }
+
+        res.json({ success: true, data: { chunk, source: { _id: source._id, title: source.title, type: source.type } } });
+    } catch (error) {
+        console.error('getChunk error:', error);
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+};

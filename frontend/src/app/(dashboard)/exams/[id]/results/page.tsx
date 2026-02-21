@@ -6,7 +6,8 @@ import { useAuthStore } from "@/store";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ArrowLeft, CheckCircle2, XCircle, Trophy, Clock, Target, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, XCircle, Trophy, Clock, Target, ChevronDown, ChevronUp, BookOpen } from "lucide-react";
+import { CitationModal } from "@/components/exams/CitationModal";
 
 interface QuestionReview {
     _id: string;
@@ -16,6 +17,7 @@ interface QuestionReview {
     correctAnswer: string | string[];
     explanation: string;
     topicTags: string[];
+    citations?: { sourceId: string; chunkId: string }[];
 }
 
 interface AttemptData {
@@ -36,6 +38,9 @@ interface AttemptData {
 
 function QuestionReviewCard({ question, userAnswer }: { question: QuestionReview; userAnswer: string | string[] | undefined }) {
     const [open, setOpen] = useState(false);
+    const [citationOpen, setCitationOpen] = useState(false);
+
+    const firstCitation = question.citations?.[0];
 
     const correctAnswer = question.correctAnswer;
     let isCorrect = false;
@@ -109,6 +114,26 @@ function QuestionReviewCard({ question, userAnswer }: { question: QuestionReview
                             {question.topicTags.map(tag => (
                                 <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
                             ))}
+                        </div>
+                    )}
+
+                    {firstCitation && (
+                        <div className="pt-1">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-xs h-7 gap-1.5"
+                                onClick={() => setCitationOpen(true)}
+                            >
+                                <BookOpen className="h-3.5 w-3.5" />
+                                View Source
+                            </Button>
+                            <CitationModal
+                                open={citationOpen}
+                                onClose={() => setCitationOpen(false)}
+                                sourceId={firstCitation.sourceId}
+                                chunkId={firstCitation.chunkId}
+                            />
                         </div>
                     )}
                 </CardContent>

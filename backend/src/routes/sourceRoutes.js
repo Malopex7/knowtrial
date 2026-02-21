@@ -8,6 +8,7 @@ import {
     deleteSource,
     updateSource,
     getSourceChunks,
+    getChunk,
 } from '../controllers/sourceController.js';
 
 // Store file in memory so we can pass the buffer to GridFS
@@ -31,4 +32,9 @@ router.route('/:id')
 router.route('/:id/chunks')
     .get(protect, getSourceChunks);
 
+// Single chunk by ID (citation modal)
+router.route('/:id/chunks/:chunkId')
+    .get(protect, getChunk);
+
 export default router;
+

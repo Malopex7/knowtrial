@@ -109,7 +109,7 @@
   - [x] Performance breakdown by topic/tag (bar chart)
 - [ ] **Review mode**
   - [x] Per-question view: my answer, correct answer, explanation
-  - [ ] Clickable citation references → opens source chunk in modal/side panel
+  - [x] Clickable citation references → opens source chunk in modal/side panel
 
 **Acceptance:** I can submit, get scored, review each question, and open cited source chunks.
 

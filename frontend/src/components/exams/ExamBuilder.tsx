@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { ScopeSelector, ScopeType } from "./ScopeSelector";
-import { ExamConfigForm, ExamType, Difficulty } from "./ExamConfigForm";
+import { ExamConfigForm, ExamType, Difficulty, LlmProvider } from "./ExamConfigForm";
 
 interface ExamResponse {
     message: string;
@@ -34,6 +34,7 @@ export function ExamBuilder() {
     const [difficulty, setDifficulty] = useState<Difficulty>("medium");
     const [count, setCount] = useState(10);
     const [timeLimit, setTimeLimit] = useState(0);
+    const [llmProvider, setLlmProvider] = useState<LlmProvider>("github");
 
     // API State
     const [loading, setLoading] = useState(false);
@@ -71,6 +72,7 @@ export function ExamBuilder() {
                     type,
                     difficulty,
                     count,
+                    llmProvider,
                     options: {
                         timeLimitMinutes: timeLimit,
                         randomized: true
@@ -160,6 +162,8 @@ export function ExamBuilder() {
                     setCount={setCount}
                     timeLimit={timeLimit}
                     setTimeLimit={setTimeLimit}
+                    llmProvider={llmProvider}
+                    setLlmProvider={setLlmProvider}
                 />
 
                 {error && (

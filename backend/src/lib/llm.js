@@ -25,6 +25,9 @@ const QUESTION_TYPES = ['mcq', 'multi', 'scenario', 'short'];
 export async function generateQuestions(chunks, config) {
     if (!chunks || chunks.length === 0) return [];
 
+    // provider: 'gemini' | 'github' | 'auto' (default)
+    const provider = config.provider || 'auto';
+
     const allQuestions = [];
 
     // Split chunks into batches
@@ -33,7 +36,7 @@ export async function generateQuestions(chunks, config) {
         batches.push(chunks.slice(i, i + BATCH_SIZE));
     }
 
-    console.log(`[LLM] Processing ${chunks.length} chunks in ${batches.length} batch(es)...`);
+    console.log(`[LLM] Provider: ${provider} | Processing ${chunks.length} chunks in ${batches.length} batch(es)...`);
 
     for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
         const batch = batches[batchIdx];
@@ -52,11 +55,19 @@ export async function generateQuestions(chunks, config) {
         console.log(`[LLM] Batch ${batchIdx + 1}/${batches.length}: ${batch.length} chunk(s), types: [${chunkConfigs.map(c => c.type).join(', ')}]`);
 
         try {
-            // Try Gemini first, fallback to GitHub Models on rate limit
-            const text = await callWithFallback(prompt);
+            let text = null;
+
+            if (provider === 'gemini') {
+                text = await callGemini(prompt);
+            } else if (provider === 'github') {
+                text = await callGitHubModels(prompt);
+            } else {
+                // 'auto': try Gemini first, fall back to GitHub Models
+                text = await callWithFallback(prompt);
+            }
 
             if (!text) {
-                console.error(`[LLM] Batch ${batchIdx + 1} failed on all providers. Skipping.`);
+                console.error(`[LLM] Batch ${batchIdx + 1} failed. Skipping.`);
                 continue;
             }
 
@@ -251,30 +262,32 @@ CRITICAL RULES:
 2. Every question MUST be grounded in the provided text — do not make up facts.
 3. Each question must test understanding, not just memorization.
 4. Explanations must reference the source text to justify the correct answer.
-5. Output MUST be valid JSON — an array of question objects.
+5. Output MUST be valid JSON in the exact format below.
 
 I will provide ${chunkConfigs.length} chunk(s) of study material. Generate exactly ONE question per chunk.
 
 ${chunkSections}
 
-OUTPUT FORMAT — return a JSON array with exactly ${chunkConfigs.length} object(s):
+OUTPUT FORMAT — return a JSON object with a "questions" array containing exactly ${chunkConfigs.length} object(s):
 
-[
-  {
-    "chunk_index": 0,
-    "prompt": "The question text",
-    "type": "mcq",
-    "difficulty": "medium",
-    "options": [
-      { "key": "A", "text": "Option A" },
-      { "key": "B", "text": "Option B" },
-      { "key": "C", "text": "Option C" },
-      { "key": "D", "text": "Option D" }
-    ],
-    "correctAnswer": "A",
-    "explanation": "Detailed explanation referencing the source text."
-  }
-]
+{
+  "questions": [
+    {
+      "chunk_index": 0,
+      "prompt": "The question text",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        { "key": "A", "text": "Option A" },
+        { "key": "B", "text": "Option B" },
+        { "key": "C", "text": "Option C" },
+        { "key": "D", "text": "Option D" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Detailed explanation referencing the source text."
+    }
+  ]
+}
 
 IMPORTANT NOTES:
 - "chunk_index" must match the chunk number (0-based).
@@ -304,38 +317,45 @@ function getTypeInstructions(type) {
 // ── JSON Parsing ────────────────────────────────────────
 
 function parseJsonResponse(text) {
+    let parsed = null;
+
     // 1. Try direct parse
-    try {
-        return JSON.parse(text);
-    } catch { /* continue */ }
+    try { parsed = JSON.parse(text); } catch { /* continue */ }
 
-    // 2. Strip markdown fences
-    const cleaned = text
-        .replace(/```json\s*/gi, '')
-        .replace(/```\s*/g, '')
-        .trim();
+    if (!parsed) {
+        // 2. Strip markdown fences and retry
+        const cleaned = text
+            .replace(/```json\s*/gi, '')
+            .replace(/```\s*/g, '')
+            .trim();
+        try { parsed = JSON.parse(cleaned); } catch { /* continue */ }
 
-    try {
-        return JSON.parse(cleaned);
-    } catch { /* continue */ }
+        if (!parsed) {
+            // 3. Extract array or object substring
+            const arrayMatch = cleaned.match(/\[[\s\S]*\]/);
+            if (arrayMatch) { try { parsed = JSON.parse(arrayMatch[0]); } catch { /* continue */ } }
 
-    // 3. Try to extract JSON array or object
-    const arrayMatch = cleaned.match(/\[[\s\S]*\]/);
-    if (arrayMatch) {
-        try {
-            return JSON.parse(arrayMatch[0]);
-        } catch { /* continue */ }
+            if (!parsed) {
+                const objMatch = cleaned.match(/\{[\s\S]*\}/);
+                if (objMatch) { try { parsed = JSON.parse(objMatch[0]); } catch { /* continue */ } }
+            }
+        }
     }
 
-    const objMatch = cleaned.match(/\{[\s\S]*\}/);
-    if (objMatch) {
-        try {
-            return JSON.parse(objMatch[0]);
-        } catch { /* continue */ }
+    if (!parsed) {
+        console.error('[LLM] Failed to parse JSON from response:', text.substring(0, 200));
+        return null;
     }
 
-    console.error('[LLM] Failed to parse JSON from response:', text.substring(0, 200));
-    return null;
+    // 4. If result is an object (not array), unwrap the first array-valued property.
+    //    GitHub Models json_object mode cannot return bare arrays, so it wraps them:
+    //    { "questions": [...] }  or  { "answers": [...] }  etc.
+    if (!Array.isArray(parsed) && typeof parsed === 'object') {
+        const arrayValue = Object.values(parsed).find(v => Array.isArray(v));
+        if (arrayValue) return arrayValue;
+    }
+
+    return parsed;
 }
 
 // ── Helpers ─────────────────────────────────────────────

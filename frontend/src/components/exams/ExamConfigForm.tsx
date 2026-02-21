@@ -12,6 +12,7 @@ import {
 
 export type ExamType = 'mcq' | 'multi' | 'scenario' | 'short' | 'mixed';
 export type Difficulty = 'easy' | 'medium' | 'hard';
+export type LlmProvider = 'auto' | 'gemini' | 'github';
 
 interface ExamConfigFormProps {
     title: string;
@@ -24,6 +25,8 @@ interface ExamConfigFormProps {
     setCount: (count: number) => void;
     timeLimit: number;
     setTimeLimit: (min: number) => void;
+    llmProvider: LlmProvider;
+    setLlmProvider: (p: LlmProvider) => void;
 }
 
 export function ExamConfigForm({
@@ -31,7 +34,8 @@ export function ExamConfigForm({
     type, setType,
     difficulty, setDifficulty,
     count, setCount,
-    timeLimit, setTimeLimit
+    timeLimit, setTimeLimit,
+    llmProvider, setLlmProvider,
 }: ExamConfigFormProps) {
     return (
         <div className="space-y-4">
@@ -103,6 +107,32 @@ export function ExamConfigForm({
                     />
                     <p className="text-[0.8rem] text-muted-foreground">Set to 0 for no time limit.</p>
                 </div>
+            </div>
+
+            {/* LLM Provider selector */}
+            <div className="space-y-1.5">
+                <Label>AI Provider</Label>
+                <Select value={llmProvider} onValueChange={(val) => setLlmProvider(val as LlmProvider)}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select AI provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="auto">
+                            Auto (Gemini → GitHub Models fallback)
+                        </SelectItem>
+                        <SelectItem value="gemini">
+                            Google Gemini only
+                        </SelectItem>
+                        <SelectItem value="github">
+                            GitHub Models (GPT-4o-mini) only
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+                <p className="text-[0.8rem] text-muted-foreground">
+                    {llmProvider === 'auto' && 'Tries Gemini first. Falls back to GitHub Models if rate limited.'}
+                    {llmProvider === 'gemini' && 'Uses Google Gemini directly. Fails if rate limited.'}
+                    {llmProvider === 'github' && 'Uses GitHub Models (GPT-4o-mini) directly. Faster, 8k token cap.'}
+                </p>
             </div>
         </div>
     );
