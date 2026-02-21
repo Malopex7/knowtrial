@@ -50,7 +50,7 @@ const questionSchema = new mongoose.Schema(
         },
         explanation: {
             type: String,
-            required: [true, 'Explanation is required'],
+            default: 'No explanation provided.',
         },
         citations: [
             {

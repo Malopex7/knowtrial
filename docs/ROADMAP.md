@@ -128,7 +128,7 @@
   - [x] Average time per question
   - [x] Improvement trend line over time
 - [x] **Weakness Practice**
-  - [x] `POST /api/exams/weakness` — auto-generate mini-exam from weakest tags
+  - [-] `POST /api/exams/weakness` — auto-generate mini-exam from weakest tags
   - [x] Dedicated "Practice Weak Areas" button on dashboard
 
 **Acceptance:** Attempt history and topic analytics are visible. Weakness Practice creates a quiz from my weakest topics.
@@ -140,7 +140,7 @@
 **Goal:** Admin panel, performance, and final polish.
 
 - [ ] **Admin panel** (simple)
-  - [ ] View all sources across users
+  - [x] View all sources across users
   - [ ] Retry failed source processing
   - [ ] Manage global tags/topics
 - [ ] **Performance**

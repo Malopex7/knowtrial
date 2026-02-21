@@ -25,8 +25,9 @@ export function validateQuestion(q, defaults = {}) {
         errors.push('Missing or too short "prompt"');
     }
 
-    if (!q.explanation || typeof q.explanation !== 'string' || q.explanation.trim().length < 5) {
-        errors.push('Missing or too short "explanation"');
+    if (!q.explanation || typeof q.explanation !== 'string' || q.explanation.trim().length === 0) {
+        // Soft fallback
+        q.explanation = 'No explanation provided.';
     }
 
     // ── Type ────────────────────────────────────────────
