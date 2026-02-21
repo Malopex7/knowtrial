@@ -6,7 +6,7 @@ dotenv.config();
 // ── Init Gemini ─────────────────────────────────────────
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-const BATCH_SIZE = 5;          // Chunks per LLM call
+const BATCH_SIZE = 3;          // Chunks per LLM call (3 × ~800 tokens ≈ 2400 context tokens + headroom)
 const BASE_DELAY_MS = 1500;    // Delay between batches
 const MAX_RETRIES = 3;         // Retries on rate-limit
 const BACKOFF_SCHEDULE = [15_000, 30_000, 60_000]; // Exponential backoff
@@ -221,8 +221,13 @@ async function callGitHubModels(prompt) {
 // ── Prompt Construction ─────────────────────────────────
 
 function constructBatchPrompt(chunkConfigs) {
+    const MAX_CHUNK_CHARS = 1500; // ~375 tokens per chunk — safe for GitHub Models 8k cap
+
     const chunkSections = chunkConfigs.map((cc, idx) => {
         const typeInstructions = getTypeInstructions(cc.type);
+        const chunkText = cc.chunk.text.length > MAX_CHUNK_CHARS
+            ? cc.chunk.text.substring(0, MAX_CHUNK_CHARS) + '...'
+            : cc.chunk.text;
 
         return `
 --- CHUNK ${idx} ---
@@ -232,7 +237,7 @@ ${cc.chunk.heading ? `Topic: ${cc.chunk.heading}` : ''}
 
 Text:
 """
-${cc.chunk.text}
+${chunkText}
 """
 
 ${typeInstructions}

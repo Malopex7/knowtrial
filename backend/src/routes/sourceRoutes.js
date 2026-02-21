@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import { protect } from '../middleware/authMiddleware.js';
 import {
     createSource,
@@ -9,11 +10,17 @@ import {
     getSourceChunks,
 } from '../controllers/sourceController.js';
 
+// Store file in memory so we can pass the buffer to GridFS
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB cap
+});
 
 const router = express.Router();
 
 router.route('/')
-    .post(protect, createSource)
+    // upload.single('file') parses multipart/form-data AND puts other fields in req.body
+    .post(protect, upload.single('file'), createSource)
     .get(protect, getSources);
 
 router.route('/:id')

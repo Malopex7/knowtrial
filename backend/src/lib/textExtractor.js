@@ -1,7 +1,10 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { PDFParse } from 'pdf-parse';
+import { createRequire } from 'module';
 import mammoth from 'mammoth';
+
+const require = createRequire(import.meta.url);
+const { PDFParse } = require('pdf-parse');
 import { getBucket } from './gridfs.js';
 import Chunk from '../models/Chunk.js';
 
@@ -59,8 +62,6 @@ async function extractFromUrl(url) {
 async function extractFromPdf(gridfsFileId) {
     if (!gridfsFileId) throw new Error('GridFS file ID is missing');
     const buffer = await downloadFromGridFS(gridfsFileId);
-
-    // Using pdf-parse v2 API
     const parser = new PDFParse({ data: buffer });
     try {
         const result = await parser.getText();

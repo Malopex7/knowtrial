@@ -37,7 +37,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 export const useAuthStore = create<AuthState>((set, get) => ({
   token: null,
   user: null,
-  isLoading: false,
+  // Start as true so ProtectedRoute shows a spinner until hydrate() completes
+  isLoading: true,
   error: null,
 
   // ── Login ────────────────────────────────────
@@ -78,7 +79,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   // ── Hydrate (restore session on app mount) ───
   hydrate: async () => {
     const stored = localStorage.getItem(TOKEN_KEY);
-    if (!stored) return;
+    if (!stored) {
+      // No token found — not logged in, stop loading
+      set({ isLoading: false });
+      return;
+    }
 
     set({ isLoading: true });
 
@@ -92,6 +97,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (!res.ok || !json.success) {
         // Token expired or invalid — clean up silently
         get().logout();
+        set({ isLoading: false });
         return;
       }
 
@@ -99,6 +105,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch {
       // Network error — clear stale session
       get().logout();
+      set({ isLoading: false });
     }
   },
 

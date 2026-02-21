@@ -159,6 +159,21 @@ export const generateExam = async (req, res) => {
     }
 };
 
+// @desc    Get all exams for current user
+// @route   GET /api/exams
+// @access  Private
+export const getExams = async (req, res) => {
+    try {
+        const exams = await Exam.find({ userId: req.user._id })
+            .sort({ createdAt: -1 })
+            .select('title examType difficulty questionCount timeLimitMinutes createdAt');
+        res.json(exams);
+    } catch (error) {
+        console.error('getExams error:', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 // @desc    Get a single exam
 // @route   GET /api/exams/:id
 // @access  Private
