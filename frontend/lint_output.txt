@@ -3,7 +3,7 @@
 > next lint
 
 
-./src/app/(dashboard)/analytics/page.tsx
-6:45  Error: 'ArrowRight' is defined but never used.  @typescript-eslint/no-unused-vars
+./src/app/(dashboard)/dashboard/page.tsx
+80:25  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

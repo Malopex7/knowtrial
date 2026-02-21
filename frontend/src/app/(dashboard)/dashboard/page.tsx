@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, BookOpen, FileText, Trophy, Clock, ArrowRight, PlusCircle } from "lucide-react";
+import { Loader2, BookOpen, FileText, Trophy, Clock, ArrowRight, PlusCircle, AlertTriangle } from "lucide-react";
 
 interface AttemptSummary {
     _id: string;
@@ -23,6 +23,7 @@ export default function Dashboard() {
     const router = useRouter();
     const [attempts, setAttempts] = useState<AttemptSummary[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isGeneratingWeakness, setIsGeneratingWeakness] = useState(false);
 
     useEffect(() => {
         if (!token) return;
@@ -54,6 +55,35 @@ export default function Dashboard() {
 
     const scoreColor = (p: number) =>
         p >= 80 ? "text-green-500" : p >= 50 ? "text-yellow-500" : "text-red-500";
+
+    const handlePracticeWeakness = async () => {
+        if (!token) return;
+        setIsGeneratingWeakness(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/exams/weakness`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ count: 10 }) // default to 10 questions
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Failed to generate weakness exam");
+            }
+
+            alert("Success! Generated targeted practice exam!");
+            router.push(`/exams/${data.exam._id}/take`);
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : "Unknown error";
+            alert(`Cannot generate exam: ${msg}`);
+        } finally {
+            setIsGeneratingWeakness(false);
+        }
+    };
 
     return (
         <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
@@ -115,6 +145,23 @@ export default function Dashboard() {
                             <Link href="/exams" className="text-sm font-semibold hover:underline mt-0.5 block">
                                 New Practice Exam →
                             </Link>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card
+                    className={`bg-red-500 text-white cursor-pointer transition-opacity ${isGeneratingWeakness ? 'opacity-70 pointer-events-none' : 'hover:bg-red-600'}`}
+                    onClick={handlePracticeWeakness}
+                >
+                    <CardContent className="p-6 flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 shrink-0">
+                            {isGeneratingWeakness ? <Loader2 className="h-6 w-6 animate-spin" /> : <AlertTriangle className="h-6 w-6" />}
+                        </div>
+                        <div>
+                            <p className="text-sm opacity-90 font-medium">Auto-Generate</p>
+                            <p className="text-sm font-bold mt-0.5 block">
+                                {isGeneratingWeakness ? "Analyzing..." : "Practice Weak Areas →"}
+                            </p>
                         </div>
                     </CardContent>
                 </Card>

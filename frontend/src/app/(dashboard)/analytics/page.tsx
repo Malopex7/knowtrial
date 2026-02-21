@@ -7,6 +7,7 @@ import { Loader2, BarChart2, AlertTriangle } from "lucide-react";
 import {
     RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
     BarChart, Bar, XAxis, YAxis, Tooltip, Cell,
+    LineChart, Line, CartesianGrid,
     ResponsiveContainer,
 } from "recharts";
 
@@ -15,6 +16,9 @@ interface Attempt {
     _id: string;
     topicScores: Record<string, TopicScore>;
     percentage: number;
+    timeTakenSeconds: number | null;
+    examId: { questionCount: number } | null;
+    createdAt: string;
 }
 
 interface TopicStat {
@@ -63,6 +67,29 @@ export default function AnalyticsPage() {
 
     const topics = useMemo(() => aggregateTopics(attempts), [attempts]);
 
+    // Calculate global time stats
+    const { totalTime, totalQuestions } = useMemo(() => {
+        let tTime = 0;
+        let tQs = 0;
+        for (const a of attempts) {
+            if (a.timeTakenSeconds) tTime += a.timeTakenSeconds;
+            if (a.examId?.questionCount) tQs += a.examId.questionCount;
+        }
+        return { totalTime: tTime, totalQuestions: tQs };
+    }, [attempts]);
+
+    const avgTimePerQ = totalQuestions > 0 ? Math.round(totalTime / totalQuestions) : 0;
+
+    function formatTime(seconds: number): string {
+        if (!seconds) return "0m";
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        if (h > 0) return `${h}h ${m}m ${s}s`;
+        if (m > 0) return `${m}m ${s}s`;
+        return `${s}s`;
+    }
+
     // For radar: limit to top 10 topics to keep chart readable
     const radarData = topics.slice(0, 10).map(t => ({
         topic: t.topic.length > 20 ? t.topic.slice(0, 18) + "…" : t.topic,
@@ -72,6 +99,17 @@ export default function AnalyticsPage() {
 
     // Bar chart: all topics sorted worst → best for "weak areas" view
     const barData = [...topics].reverse().slice(-20);
+
+    // Trend chart: chronological attempts mapped to percentage score
+    const trendData = useMemo(() => {
+        return [...attempts]
+            .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+            .map((a, i) => ({
+                attemptNum: `Attempt ${i + 1}`,
+                date: new Date(a.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+                score: a.percentage
+            }));
+    }, [attempts]);
 
     if (loading) {
         return (
@@ -104,6 +142,22 @@ export default function AnalyticsPage() {
                 <p className="text-muted-foreground mt-1">
                     Aggregated performance across {attempts.length} attempt{attempts.length !== 1 ? "s" : ""} · {topics.length} topic{topics.length !== 1 ? "s" : ""}
                 </p>
+            </div>
+
+            {/* ── Summary Stats ── */}
+            <div className="grid grid-cols-3 gap-4">
+                {[
+                    { label: "Total Training Time", value: formatTime(totalTime) },
+                    { label: "Questions Answered", value: totalQuestions },
+                    { label: "Avg Time / Question", value: avgTimePerQ > 0 ? `${avgTimePerQ}s` : "—" },
+                ].map(({ label, value }) => (
+                    <Card key={label}>
+                        <CardContent className="p-4 text-center">
+                            <div className="text-2xl font-bold tabular-nums">{value}</div>
+                            <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
+                        </CardContent>
+                    </Card>
+                ))}
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
@@ -200,43 +254,97 @@ export default function AnalyticsPage() {
                 </Card>
             </div>
 
-            {/* ── Top Weaknesses ── */}
-            {topics.filter(t => t.pct < 80).length > 0 && (
-                <Card className="border-red-500/20 bg-red-500/5">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <CardTitle className="text-base text-red-500 flex items-center gap-2">
-                                    <AlertTriangle className="h-4 w-4" />
-                                    Top Weaknesses to Review
-                                </CardTitle>
-                                <CardDescription className="mt-1">
-                                    Topics where you scored below 80%. Consider generating exams focused on these areas.
-                                </CardDescription>
+            {/* ── Top Weaknesses & Trend line ── */}
+            <div className="grid gap-6 lg:grid-cols-2">
+                {/* ── Top Weaknesses ── */}
+                {topics.filter(t => t.pct < 80).length > 0 && (
+                    <Card className="border-red-500/20 bg-red-500/5 h-full">
+                        <CardHeader className="pb-3">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <CardTitle className="text-base text-red-500 flex items-center gap-2">
+                                        <AlertTriangle className="h-4 w-4" />
+                                        Top Weaknesses to Review
+                                    </CardTitle>
+                                    <CardDescription className="mt-1">
+                                        Topics where you scored below 80%.
+                                    </CardDescription>
+                                </div>
                             </div>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                            {topics
-                                .filter(t => t.pct < 80)
-                                .slice(-5)
-                                .reverse() // Show worst first
-                                .map(t => (
-                                    <div key={t.topic} className="flex items-center justify-between p-3 rounded-md bg-background border shadow-sm">
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-sm font-medium truncate">{t.topic}</p>
-                                            <p className="text-xs text-muted-foreground mt-0.5">{t.correct} of {t.total} correct</p>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid gap-3">
+                                {topics
+                                    .filter(t => t.pct < 80)
+                                    .slice(-5)
+                                    .reverse() // Show worst first
+                                    .map(t => (
+                                        <div key={t.topic} className="flex items-center justify-between p-3 rounded-md bg-background border shadow-sm">
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-sm font-medium truncate">{t.topic}</p>
+                                                <p className="text-xs text-muted-foreground mt-0.5">{t.correct} of {t.total} correct</p>
+                                            </div>
+                                            <div className={`text-lg font-bold ml-4 ${pctColor(t.pct)}`}>
+                                                {t.pct}%
+                                            </div>
                                         </div>
-                                        <div className={`text-lg font-bold ml-4 ${pctColor(t.pct)}`}>
-                                            {t.pct}%
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
+                                    ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* ── Trend Line ── */}
+                {trendData.length > 1 && (
+                    <Card className="h-full flex flex-col">
+                        <CardHeader className="pb-2 flex-none">
+                            <CardTitle className="text-base">Improvement Trend</CardTitle>
+                            <CardDescription>Overall score progression across your attempts</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1 min-h-[200px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                                    <XAxis
+                                        dataKey="attemptNum"
+                                        tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickFormatter={(_, index) => index % Math.ceil(trendData.length / 5) === 0 ? `Attempt ${index + 1}` : ''}
+                                    />
+                                    <YAxis
+                                        domain={[0, 100]}
+                                        tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickFormatter={(v) => `${v}%`}
+                                    />
+                                    <Tooltip
+                                        content={({ payload }) => {
+                                            if (!payload?.length) return null;
+                                            const d = payload[0].payload;
+                                            return (
+                                                <div className="rounded-md bg-popover border border-border px-3 py-2 text-xs shadow-md">
+                                                    <p className="font-semibold text-foreground mb-1">{d.attemptNum} · {d.date}</p>
+                                                    <p className="text-muted-foreground">Score: <span className="font-bold text-foreground">{d.score}%</span></p>
+                                                </div>
+                                            );
+                                        }}
+                                    />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="score"
+                                        stroke="hsl(var(--primary))"
+                                        strokeWidth={3}
+                                        dot={{ r: 4, fill: "hsl(var(--primary))" }}
+                                        activeDot={{ r: 6 }}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
 
             {/* ── Summary table ── */}
             <Card>

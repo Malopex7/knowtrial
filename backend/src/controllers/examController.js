@@ -2,6 +2,7 @@ import Exam from '../models/Exam.js';
 import Question from '../models/Question.js';
 import Chunk from '../models/Chunk.js';
 import Source from '../models/Source.js';
+import Attempt from '../models/Attempt.js';
 import { generateQuestions } from '../lib/llm.js';
 import { validateQuestionBatch } from '../lib/questionValidator.js';
 
@@ -158,6 +159,80 @@ export const generateExam = async (req, res) => {
     } catch (error) {
         console.error('Error generating exam:', error);
         res.status(500).json({ message: 'Failed to generate exam', error: error.message });
+    }
+};
+
+/**
+ * Automatically generate an exam based on the user's weakest topics
+ * POST /api/exams/weakness
+ */
+export const generateWeaknessExam = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // 1. Fetch all scored attempts for the user
+        const attempts = await Attempt.find({ userId, status: 'scored' }).lean();
+
+        if (attempts.length === 0) {
+            return res.status(400).json({
+                message: 'No scored attempts found. Please complete at least one exam to identify weak topics.'
+            });
+        }
+
+        // 2. Aggregate topic scores across all attempts
+        const topicMap = {}; // { 'React': { correct: 5, total: 10 } }
+        for (const attempt of attempts) {
+            if (!attempt.topicScores) continue;
+
+            // Handle mongoose Map to plain object conversion safely
+            const topicScores = attempt.topicScores instanceof Map
+                ? Object.fromEntries(attempt.topicScores)
+                : attempt.topicScores;
+
+            for (const [tag, stats] of Object.entries(topicScores)) {
+                if (!topicMap[tag]) topicMap[tag] = { correct: 0, total: 0 };
+                topicMap[tag].correct += stats.correct;
+                topicMap[tag].total += stats.total;
+            }
+        }
+
+        // 3. Calculate percentages and identify weaknesses (< 80%)
+        const weaknesses = Object.entries(topicMap)
+            .map(([topic, stats]) => ({
+                topic,
+                pct: Math.round((stats.correct / stats.total) * 100)
+            }))
+            .filter(t => t.pct < 80) // Strict 80% cutoff as requested
+            .sort((a, b) => a.pct - b.pct) // Lowest score first
+            .slice(0, 3) // Take the top 3 worst
+            .map(t => t.topic);
+
+        if (weaknesses.length === 0) {
+            return res.status(400).json({
+                message: 'No weak areas identified! You are scoring 80% or higher on all tested topics.'
+            });
+        }
+
+        console.log(`[Weakness Gen] User ${userId} weakest topics:`, weaknesses);
+
+        // 4. Mutate req.body to delegate to the existing generateExam logic
+        req.body = {
+            title: `Weakness Practice - ${new Date().toLocaleDateString()}`,
+            scope: 'tags',
+            scopeIds: weaknesses,
+            type: req.body.type || 'mixed',
+            difficulty: req.body.difficulty || 'medium',
+            count: req.body.count || 10,
+            llmProvider: req.body.llmProvider || 'auto',
+            options: req.body.options || {}
+        };
+
+        // 5. Delegate to standard generator
+        return await generateExam(req, res);
+
+    } catch (error) {
+        console.error('Error generating weakness exam:', error);
+        res.status(500).json({ message: 'Failed to generate weakness exam', error: error.message });
     }
 };
 

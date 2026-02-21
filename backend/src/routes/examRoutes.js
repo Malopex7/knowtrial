@@ -1,8 +1,11 @@
 import express from 'express';
-import { generateExam, getExams, getExam, getExamQuestions } from '../controllers/examController.js';
+import { generateExam, generateWeaknessExam, getExams, getExam, getExamQuestions } from '../controllers/examController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
+// POST /api/exams/weakness (Must be above /:id routes)
+router.post('/weakness', protect, generateWeaknessExam);
 
 // POST /api/exams/generate
 router.post('/generate', protect, generateExam);
