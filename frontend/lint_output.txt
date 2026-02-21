@@ -2,4 +2,13 @@
 > frontend@0.1.0 lint
 > next lint
 
-Γ£ö No ESLint warnings or errors
+
+./src/app/(dashboard)/admin/tags/page.tsx
+8:32  Error: 'Settings' is defined but never used.  @typescript-eslint/no-unused-vars
+21:12  Error: 'isExpanded' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+21:24  Error: 'setIsExpanded' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+52:8  Warning: React Hook useEffect has a missing dependency: 'loadTags'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+79:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+105:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

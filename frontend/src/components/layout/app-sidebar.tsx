@@ -79,6 +79,11 @@ const adminItems = [
         url: "/admin/sources",
         icon: ShieldCheck,
     },
+    {
+        title: "Global Tags",
+        url: "/admin/tags",
+        icon: Settings,
+    }
 ]
 
 export function AppSidebar() {

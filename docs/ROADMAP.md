@@ -142,7 +142,7 @@
 - [ ] **Admin panel** (simple)
   - [x] View all sources across users
   - [ ] Retry failed source processing
-  - [ ] Manage global tags/topics
+  - [x] Manage global tags/topics
 - [ ] **Performance**
   - [ ] Cache processed materials (avoid re-chunking)
   - [ ] Reuse chunk index for exam generation
