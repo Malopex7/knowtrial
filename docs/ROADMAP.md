@@ -124,7 +124,7 @@
   - [x] Click to re-enter review mode
 - [ ] **Analytics dashboard**
   - [x] Scores by topic (radar chart or grouped bar)
-  - [ ] Common incorrect topics (top-N list)
+  - [x] Common incorrect topics (top-N list)
   - [ ] Average time per question
   - [ ] Improvement trend line over time
 - [ ] **Weakness Practice**

@@ -4,6 +4,6 @@
 
 
 ./src/app/(dashboard)/analytics/page.tsx
-10:26  Error: 'Legend' is defined but never used.  @typescript-eslint/no-unused-vars
+6:45  Error: 'ArrowRight' is defined but never used.  @typescript-eslint/no-unused-vars
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

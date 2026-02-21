@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuthStore } from "@/store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, BarChart2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Loader2, BarChart2, AlertTriangle } from "lucide-react";
 import {
     RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
     BarChart, Bar, XAxis, YAxis, Tooltip, Cell,
@@ -199,6 +199,44 @@ export default function AnalyticsPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* ── Top Weaknesses ── */}
+            {topics.filter(t => t.pct < 80).length > 0 && (
+                <Card className="border-red-500/20 bg-red-500/5">
+                    <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-base text-red-500 flex items-center gap-2">
+                                    <AlertTriangle className="h-4 w-4" />
+                                    Top Weaknesses to Review
+                                </CardTitle>
+                                <CardDescription className="mt-1">
+                                    Topics where you scored below 80%. Consider generating exams focused on these areas.
+                                </CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {topics
+                                .filter(t => t.pct < 80)
+                                .slice(-5)
+                                .reverse() // Show worst first
+                                .map(t => (
+                                    <div key={t.topic} className="flex items-center justify-between p-3 rounded-md bg-background border shadow-sm">
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-sm font-medium truncate">{t.topic}</p>
+                                            <p className="text-xs text-muted-foreground mt-0.5">{t.correct} of {t.total} correct</p>
+                                        </div>
+                                        <div className={`text-lg font-bold ml-4 ${pctColor(t.pct)}`}>
+                                            {t.pct}%
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             {/* ── Summary table ── */}
             <Card>
