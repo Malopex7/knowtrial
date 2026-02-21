@@ -123,7 +123,7 @@
   - [x] List all past attempts: date, score, time, topic breakdown
   - [x] Click to re-enter review mode
 - [ ] **Analytics dashboard**
-  - [ ] Scores by topic (radar chart or grouped bar)
+  - [x] Scores by topic (radar chart or grouped bar)
   - [ ] Common incorrect topics (top-N list)
   - [ ] Average time per question
   - [ ] Improvement trend line over time

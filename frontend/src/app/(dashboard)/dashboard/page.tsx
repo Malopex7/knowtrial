@@ -26,7 +26,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         if (!token) return;
-        fetch("http://localhost:5001/api/attempts", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/attempts`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(r => r.json())

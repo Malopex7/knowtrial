@@ -14,6 +14,7 @@ import {
     LogOut,
     User,
     ChevronUp,
+    BarChart2,
 } from "lucide-react"
 
 import {
@@ -37,7 +38,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-// Menu items
 const mainNavItems = [
     {
         title: "Dashboard",
@@ -65,6 +65,11 @@ const mainNavItems = [
         title: "Attempt History",
         url: "/history",
         icon: History,
+    },
+    {
+        title: "Analytics",
+        url: "/analytics",
+        icon: BarChart2,
     },
 ]
 
