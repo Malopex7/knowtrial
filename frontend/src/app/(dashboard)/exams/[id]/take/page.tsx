@@ -115,13 +115,14 @@ export default function TakeExamPage() {
                 })
             });
 
-            if (!res.ok) throw new Error('Failed to submit attempt');
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to submit attempt');
 
             // Clean up and clear exam state
             clearExam();
 
-            // Redirect to dashboard or history (for now, just fallback to library)
-            router.push('/dashboard');
+            // Redirect to results page
+            router.push(`/exams/${examData._id}/results?attemptId=${data.attemptId}`);
 
         } catch (err: unknown) {
             if (err instanceof Error) {

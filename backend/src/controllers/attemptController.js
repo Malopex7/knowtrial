@@ -1,5 +1,6 @@
 import Exam from '../models/Exam.js';
 import Attempt from '../models/Attempt.js';
+import Question from '../models/Question.js';
 
 // @desc    Submit an exam attempt
 // @route   POST /api/attempts
@@ -18,23 +19,72 @@ export const submitAttempt = async (req, res) => {
             return res.status(404).json({ message: 'Exam not found or you do not have permission.' });
         }
 
+        // Fetch all questions for this exam
+        const questions = await Question.find({ examId });
+
+        let score = 0;
+        const topicScores = new Map();
+
+        // Helper to update topic scores
+        const updateTopicScores = (tags, isCorrect) => {
+            if (!tags || tags.length === 0) return;
+            tags.forEach(tag => {
+                const current = topicScores.get(tag) || { correct: 0, total: 0 };
+                topicScores.set(tag, {
+                    correct: current.correct + (isCorrect ? 1 : 0),
+                    total: current.total + 1
+                });
+            });
+        };
+
+        questions.forEach((q) => {
+            const userAnswer = answers[q._id.toString()];
+            const correctAnswer = q.correctAnswer;
+
+            let isCorrect = false;
+
+            if (q.type === 'mcq' || q.type === 'scenario') {
+                if (userAnswer && String(userAnswer) === String(correctAnswer)) {
+                    isCorrect = true;
+                    score++;
+                }
+            } else if (q.type === 'multi') {
+                if (Array.isArray(userAnswer) && Array.isArray(correctAnswer)) {
+                    const sortedUser = [...userAnswer].sort().join(',');
+                    const sortedCorrect = [...correctAnswer].sort().join(',');
+                    if (sortedUser === sortedCorrect) {
+                        isCorrect = true;
+                        score++;
+                    }
+                }
+            } else if (q.type === 'short') {
+                // Short answers are not deterministic. Give 0 for now.
+            }
+
+            updateTopicScores(q.topicTags, isCorrect);
+        });
+
+        const totalQuestions = questions.length;
+        const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+
         // Create the attempt record
-        // For Phase 4, we just save it. In Phase 5 we will add scoring logic.
         const attempt = await Attempt.create({
             userId: req.user._id,
             examId,
             answers,
+            score,
+            percentage,
+            topicScores,
             timeTakenSeconds: timeTakenSeconds || 0,
-            status: 'submitted',
+            status: 'scored',
             submittedAt: new Date()
         });
 
-        // Trigger Phase 5 scoring process here later (synchronous or async via Queue)
-        // ...
-
         res.status(201).json({
-            message: 'Attempt submitted successfully',
-            attemptId: attempt._id
+            message: 'Attempt submitted and scored successfully',
+            attemptId: attempt._id,
+            score,
+            percentage
         });
 
     } catch (error) {
@@ -60,7 +110,12 @@ export const getAttempt = async (req, res) => {
             return res.status(404).json({ message: 'Attempt not found' });
         }
 
-        res.json(attempt);
+        // Fetch questions for review mode — expose correctAnswer + explanation
+        const questions = await Question.find({ examId: attempt.examId._id })
+            .select('type prompt options correctAnswer explanation topicTags citations')
+            .lean();
+
+        res.json({ ...attempt, questions });
     } catch (error) {
         console.error('getAttempt error:', error);
         res.status(500).json({ message: 'Server Error', error: error.message });

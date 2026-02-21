@@ -83,13 +83,13 @@
 
 **Goal:** Clean, functional exam-taking UI.
 
-- [ ] Timer (countdown if time limit set)
-- [ ] Question navigation: next/prev buttons, jump list sidebar
-- [ ] Flag question for review (toggle)
-- [ ] Progress indicator: answered / unanswered / flagged count
-- [ ] Auto-save answers to Zustand store (persist to API on interval)
-- [ ] Submit confirmation modal
-- [ ] `POST /api/attempts` — save completed attempt
+- [x] Timer (countdown if time limit set)
+- [x] Question navigation: next/prev buttons, jump list sidebar
+- [x] Flag question for review (toggle)
+- [x] Progress indicator: answered / unanswered / flagged count
+- [x] Auto-save answers to Zustand store (persist to API on interval)
+- [x] Submit confirmation modal
+- [x] `POST /api/attempts` — save completed attempt
 
 **Acceptance:** I can take an exam with timer, navigate questions, flag for review, and submit.
 
@@ -99,16 +99,16 @@
 
 **Goal:** Accurate scoring with detailed explanations and source references.
 
-- [ ] **Scoring engine**
-  - [ ] MCQ / multi-select: deterministic comparison
-  - [ ] Scenario-based: deterministic comparison
+- [x] **Scoring engine**
+  - [x] MCQ / multi-select: deterministic comparison
+  - [x] Scenario-based: deterministic comparison
   - [ ] Short answer: rubric-based scoring (keyword matching + LLM evaluation)
-- [ ] **Results screen**
-  - [ ] Total score + percentage
-  - [ ] Time taken
-  - [ ] Performance breakdown by topic/tag (bar chart)
+- [x] **Results screen**
+  - [x] Total score + percentage
+  - [x] Time taken
+  - [x] Performance breakdown by topic/tag (bar chart)
 - [ ] **Review mode**
-  - [ ] Per-question view: my answer, correct answer, explanation
+  - [x] Per-question view: my answer, correct answer, explanation
   - [ ] Clickable citation references → opens source chunk in modal/side panel
 
 **Acceptance:** I can submit, get scored, review each question, and open cited source chunks.
