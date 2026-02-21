@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, BookOpen } from "lucide-react";
@@ -34,31 +34,31 @@ export function CitationModal({ open, onClose, sourceId, chunkId }: CitationModa
     const [source, setSource] = useState<SourceMeta | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // Fetch when opened
-    const handleOpen = async (isOpen: boolean) => {
-        if (!isOpen) { onClose(); return; }
-        if (chunk) return; // already loaded
+    // Fetch whenever the modal opens (or sourceId/chunkId change)
+    useEffect(() => {
+        if (!open || !sourceId || !chunkId) return;
 
         setLoading(true);
         setError(null);
-        try {
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/sources/${sourceId}/chunks/${chunkId}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            const data = await res.json();
-            if (!res.ok || !data.success) throw new Error(data.error || "Failed to load source chunk");
-            setChunk(data.data.chunk);
-            setSource(data.data.source);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to load");
-        } finally {
-            setLoading(false);
-        }
-    };
+        setChunk(null);
+        setSource(null);
+
+        fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/sources/${sourceId}/chunks/${chunkId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        )
+            .then(res => res.json().then(data => ({ ok: res.ok, data })))
+            .then(({ ok, data }) => {
+                if (!ok || !data.success) throw new Error(data.error || "Failed to load source chunk");
+                setChunk(data.data.chunk);
+                setSource(data.data.source);
+            })
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
+    }, [open, sourceId, chunkId, token]);
 
     return (
-        <Dialog open={open} onOpenChange={handleOpen}>
+        <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
             <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
                 <DialogHeader>
                     <div className="flex items-center gap-2">

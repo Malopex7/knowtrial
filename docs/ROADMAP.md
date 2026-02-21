@@ -107,7 +107,7 @@
   - [x] Total score + percentage
   - [x] Time taken
   - [x] Performance breakdown by topic/tag (bar chart)
-- [ ] **Review mode**
+- [x] **Review mode**
   - [x] Per-question view: my answer, correct answer, explanation
   - [x] Clickable citation references → opens source chunk in modal/side panel
 
@@ -119,9 +119,9 @@
 
 **Goal:** Analytics and targeted practice from weak areas.
 
-- [ ] **Attempts History page**
-  - [ ] List all past attempts: date, score, time, topic breakdown
-  - [ ] Click to re-enter review mode
+- [x] **Attempts History page**
+  - [x] List all past attempts: date, score, time, topic breakdown
+  - [x] Click to re-enter review mode
 - [ ] **Analytics dashboard**
   - [ ] Scores by topic (radar chart or grouped bar)
   - [ ] Common incorrect topics (top-N list)
