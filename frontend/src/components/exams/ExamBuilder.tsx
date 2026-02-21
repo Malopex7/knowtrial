@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
 import { Button } from "@/components/ui/button";
@@ -162,11 +163,24 @@ export function ExamBuilder() {
                 />
 
                 {error && (
-                    <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
+                    error.toLowerCase().includes('no accessible sources') ? (
+                        <Alert>
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Your library is empty</AlertTitle>
+                            <AlertDescription>
+                                You need to add study material before generating an exam.{" "}
+                                <Link href="/library" className="underline font-medium">
+                                    Go to the Library →
+                                </Link>
+                            </AlertDescription>
+                        </Alert>
+                    ) : (
+                        <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    )
                 )}
 
             </CardContent>

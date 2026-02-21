@@ -3,7 +3,9 @@
 > next lint
 
 
-./src/app/(dashboard)/exams/[id]/results/page.tsx
-52:11  Error: 'formatAnswer' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+./src/app/(dashboard)/dashboard/page.tsx
+7:29  Error: 'CardDescription' is defined but never used.  @typescript-eslint/no-unused-vars
+7:46  Error: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+7:58  Error: 'CardTitle' is defined but never used.  @typescript-eslint/no-unused-vars
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
