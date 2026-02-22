@@ -37,6 +37,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 const mainNavItems = [
     {
@@ -163,6 +164,12 @@ export function AppSidebar() {
             </SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>
+                    <SidebarMenuItem>
+                        <div className="flex items-center justify-between px-2 py-1">
+                            <span className="text-sm font-medium text-muted-foreground mr-2">Theme</span>
+                            <ThemeToggle />
+                        </div>
+                    </SidebarMenuItem>
                     <SidebarMenuItem>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
