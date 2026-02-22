@@ -7,7 +7,9 @@ import { useAuthStore } from "@/store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, BookOpen, FileText, Trophy, Clock, ArrowRight, PlusCircle, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 interface AttemptSummary {
     _id: string;
@@ -75,11 +77,11 @@ export default function Dashboard() {
                 throw new Error(data.message || "Failed to generate weakness exam");
             }
 
-            alert("Success! Generated targeted practice exam!");
+            toast.success("Success! Generated targeted practice exam!");
             router.push(`/exams/${data.exam._id}/take`);
         } catch (error) {
             const msg = error instanceof Error ? error.message : "Unknown error";
-            alert(`Cannot generate exam: ${msg}`);
+            toast.error(`Cannot generate exam: ${msg}`);
         } finally {
             setIsGeneratingWeakness(false);
         }
@@ -106,7 +108,9 @@ export default function Dashboard() {
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">Total Attempts</p>
-                            <p className="text-2xl font-bold">{loading ? "—" : attempts.length > 4 ? "5+" : attempts.length}</p>
+                            {loading ? <Skeleton className="h-8 w-12 mt-1" /> : (
+                                <p className="text-2xl font-bold">{attempts.length > 4 ? "5+" : attempts.length}</p>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
@@ -118,7 +122,9 @@ export default function Dashboard() {
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">Best Score</p>
-                            <p className="text-2xl font-bold">{loading ? "—" : best !== null ? `${best}%` : "—"}</p>
+                            {loading ? <Skeleton className="h-8 w-16 mt-1" /> : (
+                                <p className="text-2xl font-bold">{best !== null ? `${best}%` : "—"}</p>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
@@ -130,7 +136,9 @@ export default function Dashboard() {
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">Avg Score</p>
-                            <p className="text-2xl font-bold">{loading ? "—" : avg !== null ? `${avg}%` : "—"}</p>
+                            {loading ? <Skeleton className="h-8 w-16 mt-1" /> : (
+                                <p className="text-2xl font-bold">{avg !== null ? `${avg}%` : "—"}</p>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
@@ -178,9 +186,19 @@ export default function Dashboard() {
                     </div>
 
                     {loading ? (
-                        <div className="flex items-center justify-center h-32">
-                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                        </div>
+                        <Card>
+                            <CardContent className="p-4 space-y-4">
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="flex items-center justify-between py-2">
+                                        <div className="space-y-2">
+                                            <Skeleton className="h-5 w-48" />
+                                            <Skeleton className="h-4 w-32" />
+                                        </div>
+                                        <Skeleton className="h-8 w-16 rounded-full" />
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
                     ) : attempts.length === 0 ? (
                         <Card>
                             <CardContent className="p-8 text-center">

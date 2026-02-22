@@ -6,6 +6,7 @@ import { useAuthStore } from "@/store";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, ShieldAlert, Edit2, Trash2, Tag as TagIcon } from "lucide-react";
+import { toast } from "sonner";
 
 interface GlobalTag {
     name: string;
@@ -76,9 +77,10 @@ export default function AdminTagsPage() {
 
             setEditingTag(null);
             loadTags(); // Reload to get fresh aggregated counts
+            toast.success("Tag renamed successfully");
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error";
-            alert(msg);
+            toast.error(msg);
         } finally {
             setActionLoading(null);
         }
@@ -103,9 +105,10 @@ export default function AdminTagsPage() {
             if (!res.ok) throw new Error("Failed to delete tag");
 
             loadTags();
+            toast.success("Tag deleted successfully");
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Unknown error";
-            alert(msg);
+            toast.error(msg);
         } finally {
             setActionLoading(null);
         }

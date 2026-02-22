@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ClientLayout } from "@/components/layout/client-layout";
+import { Toaster } from "sonner";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function RootLayout({
             <ClientLayout>
               {children}
             </ClientLayout>
+            <Toaster position="top-center" richColors />
           </AuthProvider>
         </ThemeProvider>
       </body>

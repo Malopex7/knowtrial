@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { TagInput } from "@/components/ui/tag-input";
 import { useAuthStore } from "@/store";
+import { toast } from "sonner";
 
 // Allowed file types
 const ACCEPTED_TYPES = {
@@ -134,6 +135,7 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
             }
 
             // Success
+            toast.success(`Successfully imported source!`);
             setOpen(false);
             resetForm();
             if (onSourceAdded) onSourceAdded();

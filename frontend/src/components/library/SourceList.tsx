@@ -7,6 +7,8 @@ import { FileText, Globe, MoreVertical, Trash2, ExternalLink, Edit, Filter } fro
 import { useAuthStore } from "@/store";
 import { StatusBadge } from "./StatusBadge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -93,9 +95,13 @@ export function SourceList() {
             });
             if (res.ok) {
                 setSources((prev) => prev.filter((s) => s._id !== id));
+                toast.success("Source deleted successfully");
+            } else {
+                toast.error("Failed to delete source");
             }
         } catch (error) {
             console.error("Failed to delete source:", error);
+            toast.error("An error occurred while deleting the source");
         }
     };
 
@@ -113,7 +119,31 @@ export function SourceList() {
         : sources.filter(s => s.tags?.includes(selectedTag));
 
     if (loading) {
-        return <div className="p-8 text-center text-muted-foreground">Loading library...</div>;
+        return (
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <Skeleton className="h-10 w-48" />
+                </div>
+                <div className="rounded-md border p-4 space-y-4">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                            <div className="flex items-center gap-4">
+                                <Skeleton className="h-8 w-8 rounded-full" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-48" />
+                                    <Skeleton className="h-3 w-32" />
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <Skeleton className="h-6 w-16" />
+                                <Skeleton className="h-6 w-12" />
+                                <Skeleton className="h-6 w-24" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
     }
 
     if (sources.length === 0) {

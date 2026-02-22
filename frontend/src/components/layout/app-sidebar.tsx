@@ -46,13 +46,13 @@ const mainNavItems = [
     },
     {
         title: "Knowledge Base",
-        url: "/dashboard/library",
+        url: "/library",
         icon: BookOpen,
         isActive: true,
         items: [
             {
                 title: "Study Library",
-                url: "/dashboard/library",
+                url: "/library",
             },
         ],
     },
