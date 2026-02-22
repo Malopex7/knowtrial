@@ -8,8 +8,26 @@ dotenv.config();
 const app = express();
 
 // Enable CORS for frontend
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000'
+];
+
+if (process.env.FRONTEND_URL) {
+  // Add the Vercel frontend URL, removing trailing slash if present
+  allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/$/, ""));
+}
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
 
@@ -38,6 +56,11 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend is working' });
 });
 
-// Start server
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// Start server (only if not running in Vercel serverless environment)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  const port = process.env.PORT || 5000;
+  app.listen(port, () => console.log(`Server running on port ${port}`));
+}
+
+// Export the app instance for Vercel serverless functions
+export default app;
