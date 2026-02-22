@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useAuthStore } from "@/store"
 import {
     BookOpen,
@@ -88,6 +88,7 @@ const adminItems = [
 
 export function AppSidebar() {
     const router = useRouter()
+    const pathname = usePathname()
     const { user: authUser, logout } = useAuthStore()
 
     const handleSignOut = () => {
@@ -128,7 +129,7 @@ export function AppSidebar() {
                         <SidebarMenu>
                             {mainNavItems.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild tooltip={item.title}>
+                                    <SidebarMenuButton asChild tooltip={item.title} isActive={pathname === item.url || pathname.startsWith(item.url + '/')}>
                                         <Link href={item.url}>
                                             <item.icon />
                                             <span>{item.title}</span>
@@ -147,7 +148,7 @@ export function AppSidebar() {
                             <SidebarMenu>
                                 {adminItems.map((item) => (
                                     <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton asChild tooltip={item.title}>
+                                        <SidebarMenuButton asChild tooltip={item.title} isActive={pathname === item.url || pathname.startsWith(item.url + '/')}>
                                             <Link href={item.url}>
                                                 <item.icon />
                                                 <span>{item.title}</span>
