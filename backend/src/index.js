@@ -19,23 +19,7 @@ if (process.env.FRONTEND_URL) {
 }
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-
-    // Check if origin is in the explicit allowedOrigins list
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-
-    // Allow any Vercel deployment URL (e.g. preview branches)
-    if (origin.endsWith('.vercel.app')) {
-      return callback(null, true);
-    }
-
-    const msg = 'The CORS policy for this site does not allow access from the specified Origin: ' + origin;
-    return callback(new Error(msg), false);
-  },
+  origin: true,
   credentials: true
 }));
 
