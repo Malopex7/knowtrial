@@ -36,7 +36,7 @@ export async function processSource(sourceId) {
                 const cachedChunks = await Chunk.find({ sourceId: cachedSource._id }).lean();
                 if (cachedChunks.length > 0) {
                     const newChunks = cachedChunks.map(c => {
-                        const { _id, createdAt, updatedAt, ...rest } = c;
+                        const { _id, createdAt: _createdAt, updatedAt: _updatedAt, ...rest } = c;
                         return {
                             ...rest,
                             sourceId: source._id,
