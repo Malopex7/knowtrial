@@ -214,6 +214,7 @@ export default function AdminTagsPage() {
                                                         <Button
                                                             variant="outline"
                                                             size="icon"
+                                                            aria-label={`Edit tag ${tag.name}`}
                                                             className="h-8 w-8"
                                                             onClick={() => startEditing(tag.name)}
                                                             disabled={actionLoading !== null}
@@ -223,6 +224,7 @@ export default function AdminTagsPage() {
                                                         <Button
                                                             variant="destructive"
                                                             size="icon"
+                                                            aria-label={`Delete tag ${tag.name}`}
                                                             className="h-8 w-8 opacity-80 hover:opacity-100"
                                                             onClick={() => handleDelete(tag.name)}
                                                             disabled={actionLoading !== null}

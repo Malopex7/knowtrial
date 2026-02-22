@@ -52,9 +52,9 @@ export function ExamConfigForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                    <Label>Question Type</Label>
+                    <Label htmlFor="question-type">Question Type</Label>
                     <Select value={type} onValueChange={(val) => setType(val as ExamType)}>
-                        <SelectTrigger>
+                        <SelectTrigger id="question-type">
                             <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -68,9 +68,9 @@ export function ExamConfigForm({
                 </div>
 
                 <div className="space-y-1.5">
-                    <Label>Difficulty</Label>
+                    <Label htmlFor="difficulty-level">Difficulty</Label>
                     <Select value={difficulty} onValueChange={(val) => setDifficulty(val as Difficulty)}>
-                        <SelectTrigger>
+                        <SelectTrigger id="difficulty-level">
                             <SelectValue placeholder="Select difficulty" />
                         </SelectTrigger>
                         <SelectContent>
@@ -111,9 +111,9 @@ export function ExamConfigForm({
 
             {/* LLM Provider selector */}
             <div className="space-y-1.5">
-                <Label>AI Provider</Label>
+                <Label htmlFor="llm-provider">AI Provider</Label>
                 <Select value={llmProvider} onValueChange={(val) => setLlmProvider(val as LlmProvider)}>
-                    <SelectTrigger>
+                    <SelectTrigger id="llm-provider">
                         <SelectValue placeholder="Select AI provider" />
                     </SelectTrigger>
                     <SelectContent>

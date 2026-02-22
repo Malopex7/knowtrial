@@ -190,6 +190,7 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                         <div className="space-y-2">
                             <Label htmlFor="tags-url">Tags</Label>
                             <TagInput
+                                id="tags-url"
                                 tags={tags}
                                 setTags={setTags}
                                 placeholder="Enter tags (press Enter)..."
@@ -253,6 +254,7 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                         <div className="space-y-2">
                             <Label htmlFor="tags-file">Tags</Label>
                             <TagInput
+                                id="tags-file"
                                 tags={tags}
                                 setTags={setTags}
                                 placeholder="Enter tags..."
@@ -300,6 +302,7 @@ export function AddSourceModal({ onSourceAdded }: AddSourceModalProps) {
                         <div className="space-y-2">
                             <Label htmlFor="tags-text">Tags</Label>
                             <TagInput
+                                id="tags-text"
                                 tags={tags}
                                 setTags={setTags}
                                 placeholder="Enter tags..."

@@ -18,9 +18,10 @@ interface Source {
 interface SourceSelectorProps {
     selectedIds: string[];
     onSelectionChange: (ids: string[]) => void;
+    "aria-labelledby"?: string;
 }
 
-export function SourceSelector({ selectedIds, onSelectionChange }: SourceSelectorProps) {
+export function SourceSelector({ selectedIds, onSelectionChange, "aria-labelledby": ariaLabelledby }: SourceSelectorProps) {
     const [sources, setSources] = useState<Source[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -59,10 +60,10 @@ export function SourceSelector({ selectedIds, onSelectionChange }: SourceSelecto
         }
     };
 
-    if (loading) return <div className="text-sm text-muted-foreground">Loading sources...</div>;
+    if (loading) return <div className="text-sm text-muted-foreground" aria-live="polite">Loading sources...</div>;
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-3" role="group" aria-labelledby={ariaLabelledby}>
             <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -70,6 +71,7 @@ export function SourceSelector({ selectedIds, onSelectionChange }: SourceSelecto
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-8"
+                    aria-label="Search sources"
                 />
             </div>
 
@@ -84,6 +86,15 @@ export function SourceSelector({ selectedIds, onSelectionChange }: SourceSelecto
                                 <div
                                     key={source._id}
                                     onClick={() => toggleSource(source._id)}
+                                    role="checkbox"
+                                    aria-checked={isSelected}
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            toggleSource(source._id);
+                                        }
+                                    }}
                                     className={cn(
                                         "flex cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground",
                                         isSelected && "bg-accent/50"

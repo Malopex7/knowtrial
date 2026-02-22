@@ -102,6 +102,7 @@ export function EditSourceDialog({ source, open, onOpenChange, onSourceUpdated }
                     <div className="space-y-2">
                         <Label htmlFor="edit-tags">Tags</Label>
                         <TagInput
+                            id="edit-tags"
                             tags={tags}
                             setTags={setTags}
                             placeholder="Enter tags..."

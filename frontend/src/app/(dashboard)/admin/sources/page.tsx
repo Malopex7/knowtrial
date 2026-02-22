@@ -105,7 +105,13 @@ export default function AdminSourcesPage() {
                         <CardTitle className="text-lg">All Sources ({sources.length})</CardTitle>
                         <CardDescription>A comprehensive top-down view of all user uploads.</CardDescription>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0"
+                        aria-expanded={isExpanded}
+                        aria-label={isExpanded ? "Collapse sources list" : "Expand sources list"}
+                    >
                         {isExpanded ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
                     </Button>
                 </CardHeader>

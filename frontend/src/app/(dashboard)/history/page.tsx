@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Calendar, Clock, ArrowRight, Target, ChevronDown, ChevronUp, Trophy } from "lucide-react";
+import { Calendar, Clock, ArrowRight, Target, ChevronDown, ChevronUp, Trophy } from "lucide-react";
 
 interface TopicScore {
     correct: number;

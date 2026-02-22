@@ -75,8 +75,9 @@ export function ScopeSelector({ scope, setScope, scopeIds, setScopeIds }: ScopeS
                 {scope === 'tags' && (
                     <Card>
                         <CardContent className="pt-6">
-                            <Label className="mb-2 block">Filter Tags</Label>
+                            <Label htmlFor="filter-tags" className="mb-2 block">Filter Tags</Label>
                             <TagInput
+                                id="filter-tags"
                                 tags={scopeIds}
                                 setTags={setScopeIds}
                                 placeholder="add tags (e.g. biology, history)..."
@@ -91,8 +92,9 @@ export function ScopeSelector({ scope, setScope, scopeIds, setScopeIds }: ScopeS
                 {scope === 'sources' && (
                     <Card>
                         <CardContent className="pt-6">
-                            <Label className="mb-2 block">Select Sources</Label>
+                            <Label id="select-sources-label" className="mb-2 block">Select Sources</Label>
                             <SourceSelector
+                                aria-labelledby="select-sources-label"
                                 selectedIds={scopeIds}
                                 onSelectionChange={(ids) => setScopeIds(ids)}
                             />
