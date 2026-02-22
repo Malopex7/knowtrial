@@ -19,7 +19,23 @@ if (process.env.FRONTEND_URL) {
 }
 
 app.use(cors({
-  origin: true,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    // Check if origin is in the explicit allowedOrigins list
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+
+    // Securely allow Vercel preview URLs for this project ONLY
+    // e.g., https://knowtrial-frontend-git-main-malopex7s-projects.vercel.app
+    if (origin.startsWith('https://knowtrial') && origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin: ' + origin;
+    return callback(new Error(msg), false);
+  },
   credentials: true
 }));
 
