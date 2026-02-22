@@ -145,7 +145,7 @@
   - [x] Manage global tags/topics
 - [x] **Performance**
   - [x] Cache processed materials (avoid re-chunking)
-  - [ ] Reuse chunk index for exam generation
+  - [x] Reuse chunk index for exam generation
 - [ ] **UI polish**
   - [ ] Responsive design audit (mobile + desktop)
   - [ ] Loading skeletons, toast notifications, empty states

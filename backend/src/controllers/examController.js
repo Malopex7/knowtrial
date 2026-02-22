@@ -80,11 +80,17 @@ export const generateExam = async (req, res) => {
             return res.status(404).json({ message: 'No content available for exam generation.' });
         }
 
-        // 4. Select Random Chunks
-        const selectedChunks = await Chunk.aggregate([
-            { $match: chunkQuery },
-            { $sample: { size: Number(count) } }
-        ]);
+        // 4. Select Random Chunks using in-memory shuffle to utilize primary indexes
+        const candidates = await Chunk.find(chunkQuery).select('_id').lean();
+
+        // Fisher-Yates shuffle
+        for (let i = candidates.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+        }
+
+        const selectedIds = candidates.slice(0, Number(count)).map(c => c._id);
+        const selectedChunks = await Chunk.find({ _id: { $in: selectedIds } }).lean();
 
         // 5. Create Exam Record
         const newExam = new Exam({
