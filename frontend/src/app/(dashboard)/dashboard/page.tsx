@@ -157,23 +157,24 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
 
-                <Card
-                    className={`bg-red-500 text-white cursor-pointer transition-opacity ${isGeneratingWeakness ? 'opacity-70 pointer-events-none' : 'hover:bg-red-600'}`}
-                    onClick={handlePracticeWeakness}
-                >
-                    <CardContent className="p-6 flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 shrink-0">
-                            {isGeneratingWeakness ? <Loader2 className="h-6 w-6 animate-spin" /> : <AlertTriangle className="h-6 w-6" />}
-                        </div>
-                        <div>
-                            <p className="text-sm opacity-90 font-medium">Auto-Generate</p>
-                            <p className="text-sm font-bold mt-0.5 block">
-                                {isGeneratingWeakness ? "Analyzing..." : "Practice Weak Areas →"}
-                            </p>
-                        </div>
-                    </CardContent>
-                </Card>
             </div>
+
+            {/* Practice Weak Areas — compact banner */}
+            <button
+                onClick={handlePracticeWeakness}
+                disabled={isGeneratingWeakness}
+                className={`w-full flex items-center gap-3 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-left transition-colors hover:bg-red-500/20 disabled:opacity-60 disabled:cursor-not-allowed`}
+            >
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 shrink-0 text-red-500">
+                    {isGeneratingWeakness ? <Loader2 className="h-4 w-4 animate-spin" /> : <AlertTriangle className="h-4 w-4" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                    <span className="text-sm font-semibold text-red-500">
+                        {isGeneratingWeakness ? "Analyzing weak areas…" : "Auto-Generate: Practice Weak Areas →"}
+                    </span>
+                    <span className="ml-2 text-xs text-muted-foreground hidden sm:inline">Creates a targeted quiz from your lowest-scoring topics</span>
+                </div>
+            </button>
 
             {/* Recent Attempts */}
             <div className="grid gap-6 lg:grid-cols-5">

@@ -24,9 +24,8 @@
 
 **Goal:** Study Material Library — ingest, chunk, and browse source material.
 
-- [ ] **Backend — Source ingestion**
+- [x] **Backend — Source ingestion**
   - [x] `POST /api/sources` — accept URL, file upload (PDF/DOCX/TXT via GridFS), or raw text
-  - [x] Text extraction: URL scraping, PDF parsing (`pdf-parse`), DOCX parsing (`mammoth`)
   - [x] Text extraction: URL scraping, PDF parsing (`pdf-parse`), DOCX parsing (`mammoth`)
   - [x] Chunking engine: split extracted text into segments with metadata (`chunk_id`, `source_id`, heading, text, token count, tags)
   - [x] Store chunks in MongoDB; update source status (`Pending → Processed | Failed`)
@@ -45,7 +44,7 @@
 
 **Goal:** AI-powered exam creation grounded in stored material.
 
-- [ ] **Backend — Question generation**
+- [x] **Backend — Question generation**
   - [x] `POST /api/exams/generate` — accept scope (all/tag/sources), type, count, difficulty, options
   - [x] Retrieve relevant chunks based on scope & tags
   - [x] Generate questions via LLM (Gemini) with strict prompt:
@@ -122,7 +121,7 @@
 - [x] **Attempts History page**
   - [x] List all past attempts: date, score, time, topic breakdown
   - [x] Click to re-enter review mode
-- [ ] **Analytics dashboard**
+- [x] **Analytics dashboard**
   - [x] Scores by topic (radar chart or grouped bar)
   - [x] Common incorrect topics (top-N list)
   - [x] Average time per question
