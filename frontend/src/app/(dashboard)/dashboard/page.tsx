@@ -242,7 +242,9 @@ export default function Dashboard() {
 
                 {/* Quick Links */}
                 <div className="space-y-4">
-                    <h2 className="text-xl font-bold">Quick Links</h2>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-bold">Quick Links</h2>
+                    </div>
                     <div className="space-y-3">
                         {[
                             { href: "/library", label: "Study Library", desc: "Browse your uploaded material", icon: BookOpen, color: "text-blue-500 bg-blue-500/10" },

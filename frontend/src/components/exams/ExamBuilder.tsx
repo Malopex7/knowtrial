@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { ScopeSelector, ScopeType } from "./ScopeSelector";
 import { ExamConfigForm, ExamType, Difficulty, LlmProvider } from "./ExamConfigForm";
@@ -38,11 +39,13 @@ export function ExamBuilder() {
 
     // API State
     const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<ExamResponse | null>(null);
 
     const handleGenerate = async () => {
         setLoading(true);
+        setProgress(0);
         setError(null);
         setSuccess(null);
 
@@ -80,13 +83,44 @@ export function ExamBuilder() {
                 })
             });
 
-            const data = await res.json();
-
             if (!res.ok) {
+                const data = await res.json();
                 throw new Error(data.message || "Failed to generate exam");
             }
 
-            setSuccess(data as ExamResponse);
+            const reader = res.body?.getReader();
+            if (!reader) throw new Error("Response is not readable");
+
+            const decoder = new TextDecoder('utf-8');
+            let buffer = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+
+                let boundary = buffer.indexOf('\n\n');
+                while (boundary !== -1) {
+                    const chunk = buffer.substring(0, boundary);
+                    buffer = buffer.substring(boundary + 2);
+
+                    if (chunk.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(chunk.substring(6));
+                            if (data.type === 'progress') {
+                                setProgress(Math.round((data.current / data.total) * 100));
+                            } else if (data.type === 'complete') {
+                                setSuccess(data as ExamResponse);
+                            } else if (data.type === 'error') {
+                                setError(data.message || data.details || "Failed to generate exam");
+                            }
+                        } catch (e) {
+                            console.error("Failed to parse SSE JSON", e);
+                        }
+                    }
+                    boundary = buffer.indexOf('\n\n');
+                }
+            }
 
             // TODO: Redirect to exam page or show summary
 
@@ -185,6 +219,16 @@ export function ExamBuilder() {
                             <AlertDescription>{error}</AlertDescription>
                         </Alert>
                     )
+                )}
+
+                {loading && (
+                    <div className="space-y-2 mt-4">
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                            <span>Generating Questions...</span>
+                            <span>{progress}%</span>
+                        </div>
+                        <Progress value={progress} className="h-2" />
+                    </div>
                 )}
 
             </CardContent>

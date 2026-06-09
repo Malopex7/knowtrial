@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ override: true });
 
 // ── Init Gemini ─────────────────────────────────────────
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -21,7 +21,7 @@ const QUESTION_TYPES = ['mcq', 'multi', 'scenario', 'short'];
  * @param {Object} config - { type: string, difficulty: string }
  * @returns {Promise<Array>} - Raw question objects (caller must validate)
  */
-export async function generateQuestions(chunks, config) {
+export async function generateQuestions(chunks, config, onProgress) {
     if (!chunks || chunks.length === 0) return [];
 
     // provider: 'gemini' | 'github' | 'auto' (default)
@@ -110,6 +110,11 @@ export async function generateQuestions(chunks, config) {
         // Delay between batches
         if (batchIdx < batches.length - 1) {
             await sleep(BASE_DELAY_MS);
+        }
+
+        if (onProgress) {
+            const current = Math.min((batchIdx + 1) * BATCH_SIZE, chunks.length);
+            onProgress(current, chunks.length);
         }
     }
 

@@ -4,13 +4,15 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ override: true });
 const app = express();
 
 // Enable CORS for frontend
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://127.0.0.1:3000'
+  'http://127.0.0.1:3000',
+  'http://192.168.100.6:3000',
+  'http://192.168.1.6:3000'
 ];
 
 if (process.env.FRONTEND_URL) {

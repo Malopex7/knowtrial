@@ -11,6 +11,16 @@ import { validateQuestionBatch } from '../lib/questionValidator.js';
  * POST /api/exams/generate
  */
 export const generateExam = async (req, res) => {
+    // Set SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const sendError = (status, message, details = '') => {
+        res.write(`data: ${JSON.stringify({ type: 'error', status, message, details })}\n\n`);
+        res.end();
+    };
+
     try {
         const {
             title,
@@ -25,7 +35,7 @@ export const generateExam = async (req, res) => {
 
         // 1. Validation
         if (!scope || !type || !difficulty) {
-            return res.status(400).json({ message: 'Missing required fields: scope, type, difficulty' });
+            return sendError(400, 'Missing required fields: scope, type, difficulty');
         }
 
         const userId = req.user._id;
@@ -35,7 +45,7 @@ export const generateExam = async (req, res) => {
 
         if (scope === 'sources') {
             if (!scopeIds || scopeIds.length === 0) {
-                return res.status(400).json({ message: 'scopeIds (sourceIds) required for "sources" scope' });
+                return sendError(400, 'scopeIds (sourceIds) required for "sources" scope');
             }
             userSourceQuery._id = { $in: scopeIds };
         }
@@ -44,7 +54,7 @@ export const generateExam = async (req, res) => {
         const allowedSourceIds = allowedSources.map(s => s._id);
 
         if (allowedSourceIds.length === 0) {
-            return res.status(404).json({ message: 'No accessible sources found matching the criteria.' });
+            return sendError(404, 'No accessible sources found matching the criteria.');
         }
 
         // 3. Build Chunk Query
@@ -54,7 +64,7 @@ export const generateExam = async (req, res) => {
 
         if (scope === 'tags') {
             if (!scopeIds || scopeIds.length === 0) {
-                return res.status(400).json({ message: 'scopeIds (tags) required for "tags" scope' });
+                return sendError(400, 'scopeIds (tags) required for "tags" scope');
             }
 
             const sourceIdsWithTags = allowedSources
@@ -77,7 +87,7 @@ export const generateExam = async (req, res) => {
         const totalDocs = await Chunk.countDocuments(chunkQuery);
 
         if (totalDocs === 0) {
-            return res.status(404).json({ message: 'No content available for exam generation.' });
+            return sendError(404, 'No content available for exam generation.');
         }
 
         // 4. Select Random Chunks using in-memory shuffle to utilize primary indexes
@@ -114,6 +124,8 @@ export const generateExam = async (req, res) => {
             type,
             difficulty,
             provider: llmProvider,
+        }, (current, total) => {
+            res.write(`data: ${JSON.stringify({ type: 'progress', current, total })}\n\n`);
         });
 
         // 7. Validate & sanitize LLM output
@@ -143,10 +155,7 @@ export const generateExam = async (req, res) => {
 
         if (questionDocs.length === 0) {
             await Exam.findByIdAndDelete(newExam._id);
-            return res.status(500).json({
-                message: 'Failed to generate any valid questions from the selected content.',
-                details: `${llmQuestions.length} raw question(s) were generated but none passed validation.`
-            });
+            return sendError(500, 'Failed to generate any valid questions from the selected content.', `${llmQuestions.length} raw question(s) were generated but none passed validation.`);
         }
 
         const createdQuestions = await Question.insertMany(questionDocs);
@@ -155,16 +164,19 @@ export const generateExam = async (req, res) => {
         newExam.questionCount = createdQuestions.length;
         await newExam.save();
 
-        res.status(201).json({
+        res.write(`data: ${JSON.stringify({
+            type: 'complete',
             message: 'Exam generated successfully',
             exam: newExam,
             questionCount: createdQuestions.length,
             questions: createdQuestions
-        });
+        })}\n\n`);
+        res.end();
 
     } catch (error) {
         console.error('Error generating exam:', error);
-        res.status(500).json({ message: 'Failed to generate exam', error: error.message });
+        res.write(`data: ${JSON.stringify({ type: 'error', status: 500, message: 'Failed to generate exam', details: error.message })}\n\n`);
+        res.end();
     }
 };
 
