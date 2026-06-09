@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, BookOpen, FileText, Trophy, Clock, ArrowRight, PlusCircle, AlertTriangle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 
 interface AttemptSummary {
@@ -26,6 +27,7 @@ export default function Dashboard() {
     const [attempts, setAttempts] = useState<AttemptSummary[]>([]);
     const [loading, setLoading] = useState(true);
     const [isGeneratingWeakness, setIsGeneratingWeakness] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         if (!token) return;
@@ -61,6 +63,7 @@ export default function Dashboard() {
     const handlePracticeWeakness = async () => {
         if (!token) return;
         setIsGeneratingWeakness(true);
+        setProgress(0);
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/exams/weakness`, {
                 method: "POST",
@@ -68,17 +71,53 @@ export default function Dashboard() {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ count: 10 }) // default to 10 questions
+                body: JSON.stringify({ count: 10, llmProvider: "github" }) // default to 10 questions
             });
 
-            const data = await res.json();
-
             if (!res.ok) {
+                const data = await res.json();
                 throw new Error(data.message || "Failed to generate weakness exam");
             }
 
-            toast.success("Success! Generated targeted practice exam!");
-            router.push(`/exams/${data.exam._id}/take`);
+            const reader = res.body?.getReader();
+            if (!reader) throw new Error("Response is not readable");
+
+            const decoder = new TextDecoder('utf-8');
+            let buffer = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+
+                let boundary = buffer.indexOf('\n\n');
+                while (boundary !== -1) {
+                    const chunk = buffer.substring(0, boundary);
+                    buffer = buffer.substring(boundary + 2);
+
+                    if (chunk.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(chunk.substring(6));
+                            if (data.type === 'progress') {
+                                setProgress(Math.round((data.current / data.total) * 100));
+                            } else if (data.type === 'complete') {
+                                toast.success("Success! Generated targeted practice exam!");
+                                router.push(`/exams/${data.exam._id}/take`);
+                                return; // Exit loop and function
+                            } else if (data.type === 'error') {
+                                throw new Error(data.message || data.details || "Failed to generate exam");
+                            }
+                        } catch (e) {
+                            if (e instanceof Error && e.message !== "Failed to parse SSE JSON") {
+                                throw e;
+                            }
+                            console.error("Failed to parse SSE JSON", e);
+                        }
+                    }
+                    boundary = buffer.indexOf('\n\n');
+                }
+            }
+
         } catch (error) {
             const msg = error instanceof Error ? error.message : "Unknown error";
             toast.error(`Cannot generate exam: ${msg}`);
@@ -160,21 +199,29 @@ export default function Dashboard() {
             </div>
 
             {/* Practice Weak Areas — compact banner */}
-            <button
-                onClick={handlePracticeWeakness}
-                disabled={isGeneratingWeakness}
-                className={`w-full flex items-center gap-3 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-left transition-colors hover:bg-red-500/20 disabled:opacity-60 disabled:cursor-not-allowed`}
-            >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 shrink-0 text-red-500">
-                    {isGeneratingWeakness ? <Loader2 className="h-4 w-4 animate-spin" /> : <AlertTriangle className="h-4 w-4" />}
-                </div>
-                <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold text-red-500">
-                        {isGeneratingWeakness ? "Analyzing weak areas…" : "Auto-Generate: Practice Weak Areas →"}
-                    </span>
-                    <span className="ml-2 text-xs text-muted-foreground hidden sm:inline">Creates a targeted quiz from your lowest-scoring topics</span>
-                </div>
-            </button>
+            <div className="space-y-2">
+                <button
+                    onClick={handlePracticeWeakness}
+                    disabled={isGeneratingWeakness}
+                    className={`w-full flex items-center gap-3 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-left transition-colors hover:bg-red-500/20 disabled:opacity-60 disabled:cursor-not-allowed`}
+                >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 shrink-0 text-red-500">
+                        {isGeneratingWeakness ? <Loader2 className="h-4 w-4 animate-spin" /> : <AlertTriangle className="h-4 w-4" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <span className="text-sm font-semibold text-red-500">
+                            {isGeneratingWeakness ? "Analyzing weak areas…" : "Auto-Generate: Practice Weak Areas →"}
+                        </span>
+                        <span className="ml-2 text-xs text-muted-foreground hidden sm:inline">Creates a targeted quiz from your lowest-scoring topics</span>
+                    </div>
+                    {isGeneratingWeakness && (
+                        <div className="text-sm font-bold text-red-500">{progress}%</div>
+                    )}
+                </button>
+                {isGeneratingWeakness && (
+                    <Progress value={progress} className="h-1 bg-red-500/20 [&>div]:bg-red-500" />
+                )}
+            </div>
 
             {/* Recent Attempts */}
             <div className="grid gap-6 lg:grid-cols-2">

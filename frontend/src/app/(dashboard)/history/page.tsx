@@ -59,10 +59,10 @@ function AttemptCard({ attempt }: { attempt: AttemptListItem }) {
     const topicEntries = Object.entries(attempt.topicScores || {});
 
     return (
-        <Card className="hover:border-primary/40 transition-colors">
+        <Card className="hover:border-primary/40 transition-colors flex flex-col">
             <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base font-semibold line-clamp-2 leading-snug">
+                    <CardTitle className="text-base font-semibold line-clamp-2 leading-snug min-h-[2.5rem]">
                         {attempt.examId?.title ?? "Deleted Exam"}
                     </CardTitle>
                     <div className={`text-2xl font-bold tabular-nums shrink-0 ${scoreColor(attempt.percentage)}`}>
@@ -94,7 +94,7 @@ function AttemptCard({ attempt }: { attempt: AttemptListItem }) {
                 </div>
             </CardHeader>
 
-            <CardContent className="pt-0 space-y-3">
+            <CardContent className="pt-0 space-y-3 flex flex-col flex-1">
                 {/* Score bar */}
                 <div className="space-y-1">
                     <div className="flex justify-between text-xs text-muted-foreground">
@@ -146,7 +146,7 @@ function AttemptCard({ attempt }: { attempt: AttemptListItem }) {
                 )}
 
                 <Button
-                    className="w-full"
+                    className="w-full mt-auto"
                     variant="outline"
                     size="sm"
                     disabled={!attempt.examId}
@@ -281,7 +281,7 @@ export default function HistoryPage() {
                     </div>
 
                     {/* Attempt cards */}
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 items-stretch">
                         {attempts.map(attempt => (
                             <AttemptCard key={attempt._id} attempt={attempt} />
                         ))}
